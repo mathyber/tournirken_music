@@ -4,15 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "swagger-autogen": "node swagger.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "mathyber",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.1",
-    "nodemon": "^2.0.16",
-    "swagger-jsdoc": "^6.2.1",
+    "swagger-autogen": "^2.21.2",
     "swagger-ui-express": "^4.4.0"
   }
 }
