@@ -1,41 +1,53 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const swaggerUI = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const app = express();
 
-var app = express();
+const swaggerOptions = {
+    swaggerDefinition: {
+        info: {
+            title: 'Tournirken Music API',
+            version: '1.0.0',
+            description: '---'
+        }
+    },
+    apis: ['app.js'],
+};
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+/**
+ * @swagger
+ * /ping:
+ *  get:
+ *    description: Ping
+ *    responses:
+ *      200:
+ *        description: Success
+ */
+app.get('/ping', (req, res) => {
+    res.send('pong.')
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+/**
+ * @swagger
+ * /test:
+ *  post:
+ *    description: Create test
+ *    parameters:
+ *    - name: title
+ *      description: test title
+ *      in: formData
+ *      required: true
+ *      type: string
+ *    responses:
+ *      201:
+ *        description: Created
+ */
+app.post('/test', (req, res) => {
+    res.status(201).send('pong.');
 });
 
-module.exports = app;
+app.listen(5000, () => console.log('port 5000'))
