@@ -1,13 +1,12 @@
 import './App.css';
+import MainRoute from "./router";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        Test
-      </header>
-    </div>
-  );
+    return (
+        <>
+            <MainRoute/>
+        </>
+    );
 }
 
 export default App;
