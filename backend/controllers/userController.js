@@ -13,6 +13,7 @@ const generateJwt = (id, email, roles=[]) => {
 
 class UserController {
     async registration(req, res, next) {
+        // #swagger.tags = ['User']
         const {email, password, vk} = req.body;
         if (!email || !password) {
             return next(ApiError.badRequest('Некорректный email или пароль!'));
@@ -32,6 +33,7 @@ class UserController {
     };
 
     async login(req, res, next) {
+        // #swagger.tags = ['User']
         const {email, password} = req.body;
         const user = await User.findOne({where: {email}});
         if (!user) {
@@ -53,6 +55,8 @@ class UserController {
     };
 
     async check(req, res, next) {
+        // #swagger.tags = ['User']
+
         // const {id} = req.query;
         // if (!id) {
         //     return next(ApiError.badRequest('Нет ID'));
