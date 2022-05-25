@@ -1,7 +1,7 @@
 const swaggerAutogen = require('swagger-autogen')()
 
 const outputFile = './swagger_output.json'
-const endpointsFiles = ['./endpoints.js']
+const endpointsFiles = ['./routes/index']
 
 const doc = {
     info: {
@@ -9,17 +9,17 @@ const doc = {
         title: "Tournirken Music API",
         description: "Documentation"
     },
-    host: "localhost:3000",
+    host: "localhost:5010/api",
     basePath: "/",
     schemes: ['http', 'https'],
     consumes: ['application/json'],
     produces: ['application/json'],
-    // tags: [
-    //     {
-    //         "name": "User",
-    //         "description": "Endpoints"
-    //     }
-    // ],
+    tags: [
+        {
+            "name": "User",
+            "description": "Пользователь"
+        }
+    ],
     // securityDefinitions: {
     //     api_key: {
     //         type: "apiKey",
@@ -44,5 +44,5 @@ const doc = {
 };
 
 swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
-    require('./app.js')
+    require('./index')
 })
