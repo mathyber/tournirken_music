@@ -37,11 +37,11 @@ class UserController {
         const {email, password} = req.body;
         const user = await User.findOne({where: {email}});
         if (!user) {
-            return next(ApiError.internal('Пользователь не найден'));
+            return next(ApiError.forbidden('Пользователь не найден'));
         }
         let comparePassword = bcrypt.compareSync(password, user.password);
         if (!comparePassword) {
-            return next(ApiError.internal('Пароль неверный'));
+            return next(ApiError.forbidden('Пароль неверный'));
         }
         const roles = await UserRole.findAll({where: {userId: user.id}});
         const rolesIdArray = roles.map(r => r.roleId);

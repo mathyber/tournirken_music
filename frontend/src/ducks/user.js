@@ -67,7 +67,7 @@ export const loginProgressSelector = createSelector(stateSelector,state => state
 // Saga
 function* loginSaga({payload}) {
     try {
-        const result = yield postman.post('/login', payload);
+        const result = yield postman.post('/user/login', payload);
         localStorage.setItem(ACCESS_TOKEN, result.token);
         setAccessToken(result.token);
         yield put({
