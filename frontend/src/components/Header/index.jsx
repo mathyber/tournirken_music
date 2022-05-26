@@ -38,7 +38,7 @@ const Header = () => {
                     position='right'
                     name='Пользователь'
                 >
-                    {profileData.email}
+                    {profileData.name+" "+profileData.surname}
                     <Button inverted color='violet' className='button-exit' size='mini' compact onClick={onLogout} icon='sign-out'/>
                 </Menu.Item>}
             </Menu>
