@@ -54,6 +54,27 @@ class UserController {
         return res.json({token});
     };
 
+    async profile(req, res, next) {
+        // #swagger.tags = ['User']
+        const user = await User.findOne({where: {id: req.user.id}});
+        const roles = await UserRole.findAll({where: {userId: user.id}});
+        const rolesIdArray = roles.map(r => r.roleId);
+        const rolesNames = [];
+        for (const r of rolesIdArray) {
+            const role = await Role.findOne({where: {id: r}});
+            rolesNames.push(role.name);
+        }
+
+        let userData = {
+            id: user.id,
+            vk: user.vk,
+            email: user.email,
+            roles: rolesNames
+        }
+
+        res.json(userData);
+    };
+
     async check(req, res, next) {
         // #swagger.tags = ['User']
 

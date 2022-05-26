@@ -1,14 +1,13 @@
 import {all, put, takeEvery} from 'redux-saga/effects';
 import {createSelector} from 'reselect';
 import {postman, setAccessToken} from "../utils/postman";
+import {ACCESS_TOKEN} from "../constants";
 
 // Types
 const LOGIN_REQUEST = 'LOGIN_REQUEST';
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGIN_ERROR = 'LOGIN_ERROR';
 const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
-
-export const ACCESS_TOKEN = 'accessToken';
 
 // Initial State
 const initial = {
@@ -39,7 +38,9 @@ export default (state = initial, {type, payload}) => {
                 isAuth: false,
                 loginProgress: false,
                 error: payload
-            }
+            };
+        default:
+            return state;
     }
 }
 
@@ -61,14 +62,14 @@ export const logout = () => {
 // Selectors
 const stateSelector = state => state.user;
 export const isAuthSelector = createSelector(stateSelector, state => state.isAuth);
+export const loginProgressSelector = createSelector(stateSelector,state => state.loginProgress);
 
 // Saga
 function* loginSaga({payload}) {
     try {
-        const {form} = payload;
-        const result = yield postman.post('/login', form);
-        localStorage.setItem(ACCESS_TOKEN, result.accessToken);
-        setAccessToken(result.accessToken);
+        const result = yield postman.post('/login', payload);
+        localStorage.setItem(ACCESS_TOKEN, result.token);
+        setAccessToken(result.token);
         yield put({
             type: LOGIN_SUCCESS,
         });
