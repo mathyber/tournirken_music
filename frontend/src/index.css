@@ -22,3 +22,19 @@ code {
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: .28571429rem;
 }
+
+.container__center {
+  display: flex;
+  justify-content: center;
+}
+
+.form-login {
+  width: 300px !important;
+}
+
+.form_center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}

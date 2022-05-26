@@ -1,9 +1,9 @@
 import axios from 'axios';
 import qs from 'qs';
-import {toast} from 'react-toastify';
 import store from '../store';
 import {logout} from '../ducks/user';
 import {ACCESS_TOKEN} from "../constants";
+import {toast} from "react-toastify";
 
 export const postman = axios.create({
     baseURL: '/api',
