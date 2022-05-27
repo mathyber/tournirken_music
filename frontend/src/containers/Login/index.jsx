@@ -34,6 +34,9 @@ const Login = () => {
     return (
         <div className='container container__center'>
             <div className='form_center'>
+                <h1>
+                    Вход
+                </h1>
                 <Form className='form-login' onSubmit={onSubmit}>
                     <Form.Input
                         required

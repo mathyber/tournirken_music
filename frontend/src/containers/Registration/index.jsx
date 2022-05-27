@@ -52,6 +52,9 @@ const Registration = () => {
     return (
         <div className='container container__center'>
             <div className='form_center'>
+                <h1>
+                    Регистрация
+                </h1>
                 <Form className='form-login' onSubmit={onSubmit}>
                     <Form.Input
                         required
