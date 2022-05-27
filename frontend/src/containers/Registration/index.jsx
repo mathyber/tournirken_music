@@ -5,6 +5,7 @@ import {regProgressSelector, regUser} from "../../ducks/user";
 import {HOME_LINK, PERSONAL_LINK} from "../../router/links";
 import {useNavigate} from "react-router";
 import {toast} from "react-toastify";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Registration = () => {
 
@@ -20,7 +21,8 @@ const Registration = () => {
         vk: '',
         password: '',
         password2: '',
-        pdCheckbox: false
+        pdCheckbox: false,
+        reCaptcha: false
     });
 
     const [errors, setErrors] = useState([]);
@@ -39,6 +41,8 @@ const Registration = () => {
             toast.error('Пароли не совпадают!')
         } else if (!form.pdCheckbox) {
             toast.error('Примите условия политики обработки персональных данных')
+        } else if (!form.reCaptcha) {
+            toast.error('Пройдите проверку на робота')
         } else dispatch(regUser({
             form,
             callback: () => navigate(HOME_LINK)
@@ -104,6 +108,12 @@ const Registration = () => {
                         onChange={(e) => onChange(e, {name: 'pdCheckbox', value: !form.pdCheckbox})}
                         label={{children: <div> <span style={{color: "red"}}>*</span> Я даю согласие на обработку персональных данных в соответствии с <a href={PERSONAL_LINK}>политикой</a></div>}}
                     />
+                    <Form.Field>
+                        <ReCAPTCHA
+                            sitekey="6LcxoaMZAAAAANucfHAq3UK9ymNQEZ6WJlgIGLg-"
+                            onChange={(value) => onChange(null, {name: 'reCaptcha', value})}
+                        />
+                    </Form.Field>
                     <Form.Button loading={loading} disabled={loading} style={{width: '100%'}} color='violet' content='Зарегистрироваться'/>
                 </Form>
             </div>

@@ -14,22 +14,27 @@ const generateJwt = (id, email, roles=[], name, surname) => {
 class UserController {
     async registration(req, res, next) {
         // #swagger.tags = ['User']
-        const {email, password, vk, name, surname} = req.body;
-        if (!email || !password) {
-            return next(ApiError.badRequest('Некорректный email или пароль!'));
-        }
-        const candidate = await User.findOne({where: {email}});
-        if (candidate) {
-            return next(ApiError.badRequest('Email уже занят'));
-        }
-        const hashPassword = await bcrypt.hash(password, 5);
-        const user = await User.create({email, password: hashPassword, vk, name, surname});
-        const role = await Role.findOne({where: {name: 'USER'}});
-        await UserRole.create({userId: user.id, roleId: role.id});
+        try {
+            const {email, password, vk, name, surname} = req.body;
+            if (!email || !password) {
+                return next(ApiError.badRequest('Некорректный email или пароль!'));
+            }
+            const candidate = await User.findOne({where: {email}});
+            if (candidate) {
+                return next(ApiError.badRequest('Email уже занят'));
+            }
+            const hashPassword = await bcrypt.hash(password, 5);
+            const user = await User.create({email, password: hashPassword, vk: vk || null, name, surname});
+            const role = await Role.findOne({where: {name: 'USER'}});
+            await UserRole.create({userId: user.id, roleId: role.id});
 
-        const token = generateJwt(user.id, email, ['USER'], name, surname);
-        return res.json({token});
-        //const roleUser = await UserRole.create({});
+            const token = generateJwt(user.id, email, ['USER'], name, surname);
+            return res.json({token});
+            //const roleUser = await UserRole.create({});
+        } catch (err) {
+            next(err)
+        }
+
     };
 
     async login(req, res, next) {
