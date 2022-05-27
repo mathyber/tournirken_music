@@ -8,6 +8,10 @@ const PROFILE_REQUEST = 'PROFILE_REQUEST';
 const PROFILE_SUCCESS = 'PROFILE_SUCCESS';
 const PROFILE_ERROR = 'PROFILE_ERROR';
 
+const REG_REQUEST = 'REG_REQUEST';
+const REG_SUCCESS = 'REG_SUCCESS';
+const REG_ERROR = 'REG_ERROR';
+
 const LOGIN_REQUEST = 'LOGIN_REQUEST';
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 const LOGIN_ERROR = 'LOGIN_ERROR';
@@ -17,6 +21,7 @@ const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
 const initial = {
     isAuth: Boolean(localStorage.getItem(ACCESS_TOKEN)),
     loginProgress: false,
+    regProgress: false,
     error: '',
     profile: {}
 };
@@ -54,6 +59,22 @@ export default (state = initial, {type, payload}) => {
                 ...state,
                 profile: payload
             };
+        case REG_REQUEST:
+            return {
+                ...state,
+                regProgress: true
+            };
+        case REG_SUCCESS:
+            return {
+                ...state,
+                isAuth: true,
+                regProgress: false
+            };
+        case REG_ERROR:
+            return {
+                ...state,
+                regProgress: false
+            };
         default:
             return state;
     }
@@ -63,6 +84,12 @@ export default (state = initial, {type, payload}) => {
 export const login = payload => {
     return {
         type: LOGIN_REQUEST,
+        payload,
+    };
+}
+export const regUser = payload => {
+    return {
+        type: REG_REQUEST,
         payload,
     };
 }
@@ -86,6 +113,7 @@ export const logout = () => {
 const stateSelector = state => state.user;
 export const isAuthSelector = createSelector(stateSelector, state => state.isAuth);
 export const loginProgressSelector = createSelector(stateSelector,state => state.loginProgress);
+export const regProgressSelector = createSelector(stateSelector,state => state.regProgress);
 export const profileSelector = createSelector(stateSelector,state => state.profile);
 
 // Saga
@@ -121,9 +149,30 @@ function* profileSaga() {
     }
 }
 
+function* regSaga({payload}) {
+    try {
+        const {form, callback} = payload;
+        const result = yield postman.post('/user/registration', form);
+        localStorage.setItem(ACCESS_TOKEN, result.token);
+        setAccessToken(result.token);
+        yield put({
+            type: REG_SUCCESS,
+            payload: result
+        });
+        callback && callback();
+
+    } catch ({response}) {
+        yield put({
+            type: REG_ERROR,
+            payload: response.data,
+        });
+    }
+}
+
 export function* saga() {
     yield all([
         takeEvery(LOGIN_REQUEST, loginSaga),
         takeEvery(PROFILE_REQUEST, profileSaga),
+        takeEvery(REG_REQUEST, regSaga),
     ]);
 }

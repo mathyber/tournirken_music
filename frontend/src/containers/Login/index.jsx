@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Form} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
 import {login, loginProgressSelector} from "../../ducks/user";
-import {HOME_LINK} from "../../router/links";
+import {HOME_LINK, REG_LINK} from "../../router/links";
 import {useNavigate} from "react-router";
 
 const Login = () => {
@@ -36,6 +36,7 @@ const Login = () => {
             <div className='form_center'>
                 <Form className='form-login' onSubmit={onSubmit}>
                     <Form.Input
+                        required
                         placeholder='E-mail'
                         name='email'
                         type='email'
@@ -43,13 +44,17 @@ const Login = () => {
                         onChange={onChange}
                     />
                     <Form.Input
+                        required
                         placeholder='Пароль'
                         name='password'
                         type='password'
                         value={form.password}
                         onChange={onChange}
                     />
-                    <Form.Button loading={loading} style={{width: '100%'}} color='violet' content='Войти'/>
+                    <Form.Button loading={loading} disabled={loading} style={{width: '100%'}} color='violet' content='Войти'/>
+                    <div>
+                        Нет аккаунта? <a href={REG_LINK}>Зарегистрируйтесь</a>
+                    </div>
                 </Form>
             </div>
         </div>

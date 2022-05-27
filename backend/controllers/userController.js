@@ -69,7 +69,9 @@ class UserController {
             id: user.id,
             vk: user.vk,
             email: user.email,
-            roles: rolesNames
+            roles: rolesNames,
+            name: user.name,
+            surname: user.surname
         }
 
         res.json(userData);
