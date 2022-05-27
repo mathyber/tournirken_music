@@ -18,6 +18,10 @@ const doc = {
         {
             "name": "User",
             "description": "Пользователь"
+        },
+        {
+            "name": "Contest",
+            "description": "Конкурс"
         }
     ],
     // securityDefinitions: {
