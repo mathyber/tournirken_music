@@ -6,6 +6,7 @@ import {HOME_LINK, LOGIN_LINK, PROFILE_LINK} from "../../router/links";
 import {useDispatch, useSelector} from "react-redux";
 import {isAuthSelector, logout, profile, profileSelector} from "../../ducks/user";
 import {useNavigate} from "react-router";
+import {infoSelector} from "../../ducks/contest";
 
 const Header = () => {
 
@@ -15,6 +16,7 @@ const Header = () => {
     const [activeItem, setActiveItem] = useState('');
     const isAuth = useSelector(isAuthSelector);
     const profileData = useSelector(profileSelector);
+    const info = useSelector(infoSelector);
 
     let navigate = useNavigate();
 
@@ -35,7 +37,7 @@ const Header = () => {
         <div className='header'>
             <Menu inverted color='violet'>
                 <Menu.Item active={activeItem === HOME_LINK}>
-                    TOURNIRKEN MUSIC
+                    {info.name}
                 </Menu.Item>
 
                 {isAuth && <Menu.Item
