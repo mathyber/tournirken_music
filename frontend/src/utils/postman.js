@@ -16,6 +16,10 @@ export const downloader = axios.create({
 
 postman.interceptors.response.use(
     resp => {
+        const {data = {}} = resp;
+        const { error, message } = data;
+        message && toast.success(message);
+
         return resp.data;
     },
     error => {
