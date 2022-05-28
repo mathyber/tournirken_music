@@ -63,7 +63,7 @@ const UserForm = ({formData = {}, isUserPage}) => {
         <Grid className='form_user'>
             <Grid.Row>
                 <Grid.Column width={isUserPage ? 16 : 8}>
-                    <Form className='' onSubmit={saveProfile}>
+                    <Form inverted className='' onSubmit={saveProfile}>
                         <Form.Input
                             label='Имя'
                             name='name'
@@ -120,7 +120,7 @@ const UserForm = ({formData = {}, isUserPage}) => {
                 </Grid.Column>
 
                 {!isUserPage && <Grid.Column width={8}>
-                    <Form onSubmit={saveNewPassword}>
+                    <Form inverted onSubmit={saveNewPassword}>
                         <Form.Input
                             required
                             error={errors.includes('password')}
