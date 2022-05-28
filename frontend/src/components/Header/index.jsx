@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './styles.scss';
 import {Button, Icon, Menu} from "semantic-ui-react";
 import { useLocation } from "react-router-dom";
-import {HOME_LINK, LOGIN_LINK} from "../../router/links";
+import {HOME_LINK, LOGIN_LINK, PROFILE_LINK} from "../../router/links";
 import {useDispatch, useSelector} from "react-redux";
 import {isAuthSelector, logout, profile, profileSelector} from "../../ducks/user";
 import {useNavigate} from "react-router";
@@ -26,7 +26,8 @@ const Header = () => {
         isAuth && dispatch(profile());
     }, [isAuth]);
 
-    const onLogout = () => {
+    const onLogout = (e) => {
+        e.stopPropagation();
         dispatch(logout());
     }
 
@@ -40,6 +41,7 @@ const Header = () => {
                 {isAuth && <Menu.Item
                     position='right'
                     name='Пользователь'
+                    onClick={()=>navigate(PROFILE_LINK)}
                 >
                     {profileData.name+" "+profileData.surname}
                     <Button title='Выйти' inverted color='violet' className='button-exit' size='mini' compact onClick={onLogout} icon='sign-out'/>
