@@ -1,0 +1,12 @@
+.pagination-block {
+  display: flex;
+  justify-content: center;
+
+  > .ui.pagination.menu .item {
+    background-color: rgba(159, 118, 231, 0.55);
+  }
+
+  > .ui.pagination.menu .active.item {
+    background-color: #b588ff;
+  }
+}

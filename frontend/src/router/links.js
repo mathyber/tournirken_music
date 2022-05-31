@@ -3,4 +3,7 @@ export const LOGIN_LINK = '/login';
 export const REG_LINK = '/registration';
 export const PERSONAL_LINK = '/personal';
 export const PROFILE_LINK = '/profile';
+export const SEASONS_LINK = '/seasons';
+export const NEW_SEASON_LINK = '/new_seasons';
+export const SEASON_LINK = '/season/:id';
 export const USER_LINK = '/user/:id';

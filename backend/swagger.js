@@ -22,6 +22,14 @@ const doc = {
         {
             "name": "Contest",
             "description": "Конкурс"
+        },
+        {
+            "name": "Season",
+            "description": "Сезон"
+        },
+        {
+            "name": "Application",
+            "description": "Заявка"
         }
     ],
     // securityDefinitions: {

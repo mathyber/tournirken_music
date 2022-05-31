@@ -24,10 +24,15 @@ const UserRole = sequelize.define('user_role', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 });
 
+//Стадия - заявка
+const ApplicationStage = sequelize.define('application_stage', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+});
+
 //Сезон конкурса
 const Season = sequelize.define('season', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false},
+    name: {type: DataTypes.STRING, allowNull: false},
     description: {type: DataTypes.STRING},
     dateStart: {type: DataTypes.DATE},
     dateEnd: {type: DataTypes.DATE},
@@ -36,18 +41,16 @@ const Season = sequelize.define('season', {
 //Стадия конкурса
 const Stage = sequelize.define('stage', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    prevStage: {type: DataTypes.INTEGER},
     nextStage: {type: DataTypes.INTEGER},
     secondChanceStage: {type: DataTypes.INTEGER},
-    name: {type: DataTypes.STRING, unique: true, allowNull: false},
+    name: {type: DataTypes.STRING, allowNull: false},
     winCount: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 1},
     secondChanceCount: {type: DataTypes.INTEGER, defaultValue: 0},
-    juryPercent: {type: DataTypes.FLOAT, allowNull: false},
-});
-
-//Стадии сезона
-const StageSeason = sequelize.define('stage_season', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    juryPercent: {type: DataTypes.FLOAT, allowNull: false, defaultValue: 0},
+    count: {type: DataTypes.INTEGER},
+    startVote: {type: DataTypes.DATE},
+    endVote: {type: DataTypes.DATE},
+    resultsApproved: {type: DataTypes.BOOLEAN, defaultValue: false}
 });
 
 //Жюри
@@ -92,14 +95,17 @@ const Point = sequelize.define('point', {
 User.belongsToMany(Role, {through: UserRole});
 Role.belongsToMany(User, {through: UserRole});
 
-Season.belongsToMany(Stage, {through: StageSeason});
-Stage.belongsToMany(Season, {through: StageSeason});
+Season.hasMany(Stage, {as: 'stages'});
+Stage.belongsTo(Season);
 
 User.belongsToMany(Stage, {through: Jury});
 Stage.belongsToMany(User, {through: Jury});
 
 User.belongsToMany(Application, {through: ApplicationUser});
 Application.belongsToMany(User, {through: ApplicationUser});
+
+Stage.belongsToMany(Application, {through: ApplicationStage});
+Application.belongsToMany(Stage, {through: ApplicationStage});
 
 Season.belongsToMany(User, {through: Dsq});
 User.belongsToMany(Season, {through: Dsq});
@@ -137,6 +143,5 @@ module.exports = {
     ApplicationState,
     Application,
     ApplicationUser,
-    StageSeason,
     Point
 }

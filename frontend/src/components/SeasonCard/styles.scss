@@ -1,0 +1,13 @@
+.season-card{
+  background-color: hsla(259, 70%, 57%, 0.62) !important;
+  background-image: none;
+  border: 0!important;
+  border-bottom-color: hsl(259, 70%, 57%)!important;
+  height: 100px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  overflow: hidden;
+  &:hover {
+    background-color: hsla(259, 53%, 58%, 0.62) !important;
+  }
+}
