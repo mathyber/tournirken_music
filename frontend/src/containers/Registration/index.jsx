@@ -55,7 +55,7 @@ const Registration = () => {
                 <h1>
                     Регистрация
                 </h1>
-                <Form className='form-login' onSubmit={onSubmit}>
+                <Form inverted className='form-login' onSubmit={onSubmit}>
                     <Form.Input
                         required
                         label='Имя'

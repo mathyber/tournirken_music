@@ -2,10 +2,12 @@ const ApiError = require('../error/apiError');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {User, UserRole, Role} = require('../models/models');
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
-const generateJwt = (id, email, roles = [], name, surname) => {
+const generateJwt = (id, email, roles = [], name, surname, isActive) => {
     return jwt.sign(
-        {id, email, roles, name, surname},
+        {id, email, roles, name, surname, isActive},
         process.env.SECRET_KEY,
         {expiresIn: '24h'}
     )
@@ -28,7 +30,7 @@ class UserController {
             const role = await Role.findOne({where: {name: 'USER'}});
             await UserRole.create({userId: user.id, roleId: role.id});
 
-            const token = generateJwt(user.id, email, ['USER'], name, surname);
+            const token = generateJwt(user.id, email, ['USER'], name, surname, true);
             return res.json({
                 message: 'Пользователь успешно зарегистрирован',
                 token
@@ -86,7 +88,7 @@ class UserController {
             const role = await Role.findOne({where: {id: r}});
             rolesNames.push(role.name);
         }
-        const token = generateJwt(user.id, user.email, rolesNames, user.name, user.surname);
+        const token = generateJwt(user.id, user.email, rolesNames, user.name, user.surname, user.isActive);
         return res.json({
             message: 'Пароль успешно изменен',
             token
@@ -112,7 +114,7 @@ class UserController {
             const role = await Role.findOne({where: {id: r}});
             rolesNames.push(role.name);
         }
-        const token = generateJwt(user.id, email, rolesNames, user.name, user.surname);
+        const token = generateJwt(user.id, email, rolesNames, user.name, user.surname, user.isActive);
         return res.json({token});
     };
 
@@ -155,7 +157,7 @@ class UserController {
             const role = await Role.findOne({where: {id: r}});
             rolesNames.push(role.name);
         }
-        const token = generateJwt(req.user.id, req.user.email, rolesNames, req.user.name, req.user.surname);
+        const token = generateJwt(req.user.id, req.user.email, rolesNames, req.user.name, req.user.surname, req.user.isActive);
         res.json({token});
     };
 
@@ -273,8 +275,38 @@ class UserController {
         } catch (err) {
             next(err)
         }
-
     };
+
+
+    async getUsers(req, res, next) {
+        // #swagger.tags = ['User']
+
+        try {
+            let {search, limit, page} = req.body;
+            search = search || '';
+            page = page || 1;
+            limit = limit || 10;
+            let offset = page * limit - limit;
+            let users;
+
+            users = await User.findAndCountAll({
+                where: {
+                    [Op.or]: [
+                        {name: {[Op.like]: `%${search}%`}},
+                        {surname: {[Op.like]: `%${search}%`}},
+                        {alias: {[Op.like]: `%${search}%`}},
+                    ]
+                },
+                limit,
+                offset
+            })
+
+            return res.json(users);
+        } catch (err) {
+            console.log(err);
+            next(err)
+        }
+    }
 }
 
 module.exports = new UserController();

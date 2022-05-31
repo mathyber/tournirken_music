@@ -14,5 +14,6 @@ router.post('/update', authMiddleware, userController.update);
 router.post('/new_password', authMiddleware, userController.changePassword);
 router.post('/new_role', checkRole('ADMIN'), userController.setRole);
 router.post('/deactive_user', checkRole('ADMIN'), userController.deActive);
+router.post('/users', authMiddleware, userController.getUsers);
 
 module.exports = router;
