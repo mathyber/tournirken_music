@@ -1,7 +1,9 @@
 const uuid = require('uuid');
 const path = require('path');
-const {Application, ApplicationUser, User} = require("../models/models");
+const {Application, ApplicationUser, User, ApplicationState} = require("../models/models");
 const ApiError = require("../error/apiError");
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 class ApplicationController {
     async newApplication(req, res, next) {
@@ -12,11 +14,16 @@ class ApplicationController {
             let fileName = uuid.v4() + '_' + audioFile.name;
             audioFile.mv(path.resolve(__dirname, '..', 'static', fileName));
 
+            const state = await ApplicationState.findOne({
+                where: {name: 'NEW'}
+            })
+
             const application = await Application.create({
                 seasonId: parseInt(JSON.parse(season)),
                 originalSongName: JSON.parse(originalSongName),
                 songName: JSON.parse(songName),
-                audioFile: fileName
+                audioFile: fileName,
+                applicationStateId: state.id
             });
             const usersIds = users ? JSON.parse(users) : [];
             [req.user.id, ...usersIds].forEach(user => {
@@ -35,7 +42,31 @@ class ApplicationController {
             console.log(err)
             next(ApiError.badRequest(err))
         }
+    };
 
+
+    async setStatusApplication(req, res, next) {
+        // #swagger.tags = ['Application']
+        try {
+            const {id, newStatus} = req.body;
+
+            const state = await ApplicationState.findOne({
+                where: {name: newStatus}
+            })
+
+            const application = await Application.update({
+                applicationStateId: state.id
+            }, {
+                where: {id}
+            });
+
+            return res.json({
+                message: 'Статус обновлен!',
+            });
+        } catch (err) {
+            console.log(err)
+            next(ApiError.badRequest(err))
+        }
     };
 
 
@@ -43,22 +74,38 @@ class ApplicationController {
         // #swagger.tags = ['Application']
 
         try {
-            let {seasonId, limit, page} = req.body;
+            let {seasonId, limit, page, state} = req.body;
             page = page || 1;
             limit = limit || 10;
-            let offset = page * limit - limit;
+            state = state || null;
+            let offset = (page * limit) - limit;
             let apps;
+
+            let arrayAnd = [
+                {seasonId}
+            ];
+
+            if (state) {
+                const stateData = await ApplicationState.findOne({
+                    where: {name: state}
+                })
+                arrayAnd.push({applicationStateId: stateData.id});
+            }
 
             apps = await Application.findAndCountAll({
                 where: {
-                    seasonId
+                    [Op.and] : arrayAnd
                 },
                 include: [
                     {
                         model: User,
                         as: 'users',
                         attributes: ['id', 'email', 'vk', 'name', 'surname', 'alias']
-                    }
+                    },
+                    {
+                        model: ApplicationState,
+                        as: 'application_state'
+                    },
                 ],
                 order: [
                     ['id', 'DESC']

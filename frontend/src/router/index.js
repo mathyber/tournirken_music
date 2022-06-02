@@ -7,7 +7,7 @@ import {
     NEW_SEASON_LINK,
     PERSONAL_LINK,
     PROFILE_LINK,
-    REG_LINK, SEASON_LINK,
+    REG_LINK, SEASON_LINK, SEASON_SETTINGS_LINK,
     SEASONS_LINK,
     USER_LINK
 } from "./links";
@@ -24,6 +24,7 @@ import Seasons from "../containers/Season/seasonsPage";
 import SeasonForm from "../containers/Season/seasonForm";
 import NewAppPage from "../containers/Application/newAppPage";
 import AppsPage from "../containers/Application/appsPage";
+import SeasonSettings from "../containers/Season/seasonSettings";
 
 const MainRoute = () => {
     const isAuth = useSelector(isAuthSelector);
@@ -76,6 +77,13 @@ const MainRoute = () => {
                    element={
                        <PrivateRoute admin isAuth={isAuth}>
                            <AppsPage/>
+                       </PrivateRoute>
+                   }
+            />
+            <Route path={SEASON_SETTINGS_LINK}
+                   element={
+                       <PrivateRoute admin isAuth={isAuth}>
+                           <SeasonSettings semifinalsSettings/>
                        </PrivateRoute>
                    }
             />

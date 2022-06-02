@@ -8,7 +8,7 @@ import {getSeason, progressSelector, saveSeason, seasonSelector} from "../../duc
 import {toFormat} from "../../utils/time";
 import {toast} from "react-toastify";
 import {isAdminSelector} from "../../ducks/user";
-import {APPS_LINK, NEW_APP_LINK} from "../../router/links";
+import {APPS_LINK, NEW_APP_LINK, SEASON_SETTINGS_LINK} from "../../router/links";
 
 const SeasonForm = () => {
 
@@ -139,6 +139,13 @@ const SeasonForm = () => {
                             >
                                 Поданные заявки
                             </Button>}
+                        {params?.id && isAdmin &&
+                            <Button
+                                onClick={() => navigate(SEASON_SETTINGS_LINK.replace(':id', params.id))}
+                                color='violet'
+                            >
+                                Настройки сезона
+                            </Button>}
                     </div>
                 </h1>
                 <Form inverted onSubmit={save}>
@@ -218,7 +225,7 @@ const SeasonForm = () => {
                                     <Grid.Row className='form_data form_stages'>
                                         {
                                             form.semifinals?.map((sf, index) => (
-                                                <Grid.Column width={8} className='m-b-20' key={'id_' + index}>
+                                                <Grid.Column width={8} className='m-b-50' key={'id_' + index}>
                                                     <StageForm
                                                         disabled={!isAdmin}
                                                         nameStage={`Настройки полуфинала ${index + 1}`}

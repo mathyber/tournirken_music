@@ -11,6 +11,10 @@ const APPS_REQUEST = 'APPS_REQUEST';
 const APPS_SUCCESS = 'APPS_SUCCESS';
 const APPS_ERROR = 'APPS_ERROR';
 
+const CHANGE_STATE_REQUEST = 'CHANGE_STATE_REQUEST';
+const CHANGE_STATE_SUCCESS = 'CHANGE_STATE_SUCCESS';
+const CHANGE_STATE_ERROR = 'CHANGE_STATE_ERROR';
+
 const CREATE_EDIT_APP_REQUEST = 'CREATE_EDIT_APP_REQUEST';
 const CREATE_EDIT_APP_SUCCESS = 'CREATE_EDIT_APP_SUCCESS';
 const CREATE_EDIT_APP_ERROR = 'CREATE_EDIT_APP_ERROR';
@@ -76,6 +80,21 @@ export default (state = initial, {type, payload}) => {
                 ...state,
                 loading: false,
             };
+        case CHANGE_STATE_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            };
+        case CHANGE_STATE_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+            };
+        case CHANGE_STATE_ERROR:
+            return {
+                ...state,
+                loading: false,
+            };
         default:
             return state;
     }
@@ -92,6 +111,13 @@ export const getApp = payload => {
 export const getApps = payload => {
     return {
         type: APPS_REQUEST,
+        payload,
+    };
+}
+
+export const changeStateApp = payload => {
+    return {
+        type: CHANGE_STATE_REQUEST,
         payload,
     };
 }
@@ -155,10 +181,28 @@ function* appsSaga({payload}) {
     }
 }
 
+function* changeStateSaga({payload}) {
+    try {
+        const {callback, id, newStatus} = payload;
+        const result = yield postman.post('/application/status/', {id, newStatus});
+        yield put({
+            type: CHANGE_STATE_SUCCESS,
+            payload: result
+        });
+        callback && callback();
+    } catch ({response}) {
+        yield put({
+            type: CHANGE_STATE_ERROR,
+            payload: response.data,
+        });
+    }
+}
+
 export function* saga() {
     yield all([
         takeEvery(CREATE_EDIT_APP_REQUEST, saveAppSaga),
         takeEvery(APP_REQUEST, appSaga),
         takeEvery(APPS_REQUEST, appsSaga),
+        takeEvery(CHANGE_STATE_REQUEST, changeStateSaga),
     ]);
 }

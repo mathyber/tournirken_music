@@ -70,6 +70,12 @@ code {
     justify-content: space-between;
 }
 
+.data-block__table {
+    max-height: calc(100vh - 280px);
+    overflow: auto;
+    margin-bottom: 20px;
+}
+
 .data-block__items {
     height: calc(100vh - 285px);
     border-radius: 4px;
@@ -106,6 +112,15 @@ code {
     width: 100% !important;
 }
 
-.m-b-20 {
+.m-b-50 {
     margin-bottom: 50px!important;
+}
+
+.m-b-5 {
+    margin-bottom: 5px!important;
+}
+
+.table__header {
+    position: sticky;
+    top: 0;
 }

@@ -132,6 +132,31 @@ Point.belongsTo(User);
 // Role.create({name: 'ADMIN'});
 // Role.create({name: 'ORGANIZER'});
 
+// ApplicationState.create({
+//     name: 'NEW',
+//     description: 'Новая заявка'
+// });
+// ApplicationState.create({
+//     name: 'REJECTED',
+//     description: 'Заявка отклонена - не соответствует требованиям'
+// });
+// ApplicationState.create({
+//     name: 'VERIFIED',
+//     description: 'Заявка проверена'
+// });
+// ApplicationState.create({
+//     name: 'ACCEPTED',
+//     description: 'Заявка принята к участию в конкурсе'
+// });
+// ApplicationState.create({
+//     name: 'IN_CONTEST',
+//     description: 'Заявка участвует в конкурсе'
+// });
+// ApplicationState.create({
+//     name: 'DSQ',
+//     description: 'Заявка дисквалифицирована'
+// });
+
 module.exports = {
     User,
     Role,
