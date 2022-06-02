@@ -6,4 +6,7 @@ export const PROFILE_LINK = '/profile';
 export const SEASONS_LINK = '/seasons';
 export const NEW_SEASON_LINK = '/new_seasons';
 export const SEASON_LINK = '/season/:id';
+export const APPS_LINK = '/season/:id/apps';
 export const USER_LINK = '/user/:id';
+export const APP_LINK = '/app/:id';
+export const NEW_APP_LINK = '/season/:id/new_app/';

@@ -1,28 +1,30 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Dimmer, Divider, Form, Grid, Input, Loader} from "semantic-ui-react";
 import {useDispatch, useSelector} from "react-redux";
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import "react-datepicker/dist/react-datepicker.css";
 import StageForm from "./stageForm";
 import {getSeason, progressSelector, saveSeason, seasonSelector} from "../../ducks/season";
 import {toFormat} from "../../utils/time";
 import {toast} from "react-toastify";
 import {isAdminSelector} from "../../ducks/user";
+import {APPS_LINK, NEW_APP_LINK} from "../../router/links";
 
 const SeasonForm = () => {
 
     const dispatch = useDispatch();
     const params = useParams();
+    const navigate = useNavigate();
     const loading = useSelector(progressSelector);
     const seasonData = useSelector(seasonSelector);
     const isAdmin = useSelector(isAdminSelector);
 
 
-    useEffect(()=>{
+    useEffect(() => {
         params?.id && dispatch(getSeason(params.id));
     }, [params]);
 
-    useEffect(()=>{
+    useEffect(() => {
         params?.id && seasonData && setForm(seasonData);
     }, [seasonData]);
 
@@ -36,7 +38,7 @@ const SeasonForm = () => {
 
     console.log(form)
 
-        // const [errors, setErrors] = useState([]);
+    // const [errors, setErrors] = useState([]);
 
     const onChange = (e, {name, value}) => {
         setForm(f => ({
@@ -121,8 +123,23 @@ const SeasonForm = () => {
                 {loading && <Dimmer active={loading}>
                     <Loader inverted size='large'>Loading</Loader>
                 </Dimmer>}
-                <h1>
+                <h1 className='data-block__header'>
                     {params?.id ? form.name : `Новый сезон`}
+                    <div>{params?.id && (Date.parse(form.dateEnd) > Date.parse(new Date())) &&
+                        <Button
+                            onClick={() => navigate(NEW_APP_LINK.replace(':id', params.id))}
+                            color='green'
+                        >
+                            ПОДАТЬ ЗАЯВКУ
+                        </Button>}
+                        {params?.id && isAdmin &&
+                            <Button
+                                onClick={() => navigate(APPS_LINK.replace(':id', params.id))}
+                                color='violet'
+                            >
+                                Поданные заявки
+                            </Button>}
+                    </div>
                 </h1>
                 <Form inverted onSubmit={save}>
                     <Grid className='form_user'>
@@ -201,12 +218,15 @@ const SeasonForm = () => {
                                     <Grid.Row className='form_data form_stages'>
                                         {
                                             form.semifinals?.map((sf, index) => (
-                                                <Grid.Column width={8} className='m-b-20' key={'id_'+index}>
+                                                <Grid.Column width={8} className='m-b-20' key={'id_' + index}>
                                                     <StageForm
                                                         disabled={!isAdmin}
                                                         nameStage={`Настройки полуфинала ${index + 1}`}
                                                         form={sf}
-                                                        onChange={(e, {name, value}) => onChangeSemifinal(index, {value, name})}
+                                                        onChange={(e, {name, value}) => onChangeSemifinal(index, {
+                                                            value,
+                                                            name
+                                                        })}
                                                         isSemifinal
                                                         secondChance={form.secondChance}
                                                     />

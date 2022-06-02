@@ -1,8 +1,9 @@
 import React from 'react';
 import {Route, Routes} from 'react-router-dom';
 import {
+    APP_LINK, APPS_LINK,
     HOME_LINK,
-    LOGIN_LINK,
+    LOGIN_LINK, NEW_APP_LINK,
     NEW_SEASON_LINK,
     PERSONAL_LINK,
     PROFILE_LINK,
@@ -21,6 +22,8 @@ import Profile from "../containers/Users/profile";
 import User from "../containers/Users/user";
 import Seasons from "../containers/Season/seasonsPage";
 import SeasonForm from "../containers/Season/seasonForm";
+import NewAppPage from "../containers/Application/newAppPage";
+import AppsPage from "../containers/Application/appsPage";
 
 const MainRoute = () => {
     const isAuth = useSelector(isAuthSelector);
@@ -59,6 +62,20 @@ const MainRoute = () => {
                    element={
                        <PrivateRoute admin isAuth={isAuth}>
                            <SeasonForm/>
+                       </PrivateRoute>
+                   }
+            />
+            <Route path={NEW_APP_LINK}
+                   element={
+                       <PrivateRoute admin isAuth={isAuth}>
+                           <NewAppPage/>
+                       </PrivateRoute>
+                   }
+            />
+            <Route path={APPS_LINK}
+                   element={
+                       <PrivateRoute admin isAuth={isAuth}>
+                           <AppsPage/>
                        </PrivateRoute>
                    }
             />
