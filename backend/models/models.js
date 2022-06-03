@@ -27,6 +27,7 @@ const UserRole = sequelize.define('user_role', {
 //Стадия - заявка
 const ApplicationStage = sequelize.define('application_stage', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    number: {type: DataTypes.INTEGER}
 });
 
 //Сезон конкурса
