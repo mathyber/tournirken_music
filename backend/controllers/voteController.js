@@ -24,8 +24,6 @@ class VoteController {
             }
         });
 
-        console.log(Date.parse(stage.startVote), Date.parse(new Date()))
-
         // #swagger.tags = ['Vote']
         try {
             return res.json({
