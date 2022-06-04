@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import {useEffect} from "react";
 import {
     getSeason,
@@ -17,7 +17,7 @@ import {appsSelector, getApps, setStagesApps} from "../../ducks/application";
 import {COUNT_ITEMS} from "../../constants";
 import {toast} from "react-toastify";
 import pkg from "../../../package.json";
-import {STAGE_LINK, USER_LINK} from "../../router/links";
+import {RESULT_LINK, STAGE_LINK, USER_LINK} from "../../router/links";
 
 const StageSettings = ({}) => {
 
@@ -26,6 +26,7 @@ const StageSettings = ({}) => {
 
     const dispatch = useDispatch();
     const params = useParams();
+    const navigate = useNavigate();
     const loading = useSelector(progressSelector);
     const seasonData = useSelector(seasonSelector);
 
@@ -213,6 +214,13 @@ const StageSettings = ({}) => {
                     </Grid.Column>
 
                     <Grid.Column width={6}>
+
+                        {isAdmin && <Grid.Column width={12}>
+                            <Button className='form-btn m-b-5' color='green'
+                                    onClick={() => navigate(RESULT_LINK.replace(':id', params.id))}
+                                    type='button'>Открыть страницу голосующих</Button>
+                        </Grid.Column>}
+
                         <Segment color={'violet'} inverted padded>
                             <Label color={'violet'} attached='top'>Описание</Label>
                             <div>

@@ -12,7 +12,7 @@ const PaginationBlock = ({totalPages, onChange, active}) => {
                 ellipsisItem={null}
                 firstItem={null}
                 lastItem={null}
-                totalPages={Math.round(totalPages || 0)}
+                totalPages={Math.ceil(totalPages || 0)}
             />
         </div>
     )

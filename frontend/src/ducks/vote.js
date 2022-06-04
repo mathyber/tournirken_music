@@ -11,6 +11,10 @@ const VOTE_REQUEST = 'VOTE_REQUEST';
 const VOTE_SUCCESS = 'VOTE_SUCCESS';
 const VOTE_ERROR = 'VOTE_ERROR';
 
+const DELETE_VOTE_REQUEST = 'DELETE_VOTE_REQUEST';
+const DELETE_VOTE_SUCCESS = 'DELETE_VOTE_SUCCESS';
+const DELETE_VOTE_ERROR = 'DELETE_VOTE_ERROR';
+
 // Initial State
 const initial = {
     voteSystem: [],
@@ -51,6 +55,21 @@ export default (state = initial, {type, payload}) => {
                 ...state,
                 loading: false,
             };
+        case DELETE_VOTE_REQUEST:
+            return {
+                ...state,
+                loading: true
+            };
+        case DELETE_VOTE_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+            };
+        case DELETE_VOTE_ERROR:
+            return {
+                ...state,
+                loading: false,
+            };
         default:
             return state;
     }
@@ -67,6 +86,13 @@ export const getVoteSystem = payload => {
 export const setVotePoints = payload => {
     return {
         type: VOTE_REQUEST,
+        payload,
+    };
+}
+
+export const deleteVotePoints = payload => {
+    return {
+        type: DELETE_VOTE_REQUEST,
         payload,
     };
 }
@@ -109,9 +135,27 @@ function* voteSaga({payload}) {
     }
 }
 
+function* deleteVoteSaga({payload}) {
+    try {
+        const {id, userId, callback} = payload;
+        const result = yield postman.delete(`/vote/${id}/${userId}`);
+        yield put({
+            type: DELETE_VOTE_SUCCESS,
+            payload: result
+        });
+        callback && callback();
+    } catch ({response}) {
+        yield put({
+            type: DELETE_VOTE_SUCCESS,
+            payload: response.data,
+        });
+    }
+}
+
 export function* saga() {
     yield all([
         takeEvery(VOTE_SYSTEM_REQUEST, voteSystemSaga),
         takeEvery(VOTE_REQUEST, voteSaga),
+        takeEvery(DELETE_VOTE_REQUEST, deleteVoteSaga),
     ]);
 }

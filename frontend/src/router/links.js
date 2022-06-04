@@ -13,3 +13,4 @@ export const APP_LINK = '/app/:id';
 export const STAGE_LINK = '/stage/:id';
 export const NEW_APP_LINK = '/season/:id/new_app/';
 export const VOTE_LINK = '/vote/:id/';
+export const RESULT_LINK = '/resultVote/:id/';

@@ -34,6 +34,10 @@ const doc = {
         {
             "name": "Vote",
             "description": "Голосование"
+        },
+        {
+            "name": "Result",
+            "description": "Результаты"
         }
     ],
     // securityDefinitions: {

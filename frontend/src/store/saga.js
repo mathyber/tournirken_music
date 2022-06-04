@@ -4,6 +4,7 @@ import { saga as contestSaga } from '../ducks/contest';
 import { saga as seasonSaga } from '../ducks/season';
 import { saga as appSaga } from '../ducks/application';
 import { saga as voteSaga } from '../ducks/vote';
+import { saga as resultSaga } from '../ducks/result';
 
 export default function* rootSaga() {
     yield all([
@@ -11,6 +12,7 @@ export default function* rootSaga() {
         contestSaga(),
         seasonSaga(),
         appSaga(),
-        voteSaga()
+        voteSaga(),
+        resultSaga(),
     ]);
 }

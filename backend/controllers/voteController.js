@@ -75,6 +75,30 @@ class VoteController {
             next(err)
         }
     };
+
+    async deleteVote(req, res, next) {
+        // #swagger.tags = ['Vote']
+        try {
+
+            const {id, userId} = req.params;
+
+            Point.destroy({
+                where: {
+                    [Op.and]: [
+                        {userId},
+                        {stageId: id}
+                    ]
+                }
+            })
+
+            return res.json({
+                message: 'Успешно удалено!'
+            });
+        } catch (err) {
+            console.log(err)
+            next(err)
+        }
+    };
 }
 
 module.exports = new VoteController();
