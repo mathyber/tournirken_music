@@ -6,26 +6,25 @@ const Op = Sequelize.Op;
 
 class VoteController {
     async voteSystem(req, res, next) {
-
-        const {id} = req.body;
-
-        const isJury = await Jury.findOne({
-            where: {
-                [Op.and]: [
-                    {userId: req.user.id},
-                    {stageId: id}
-                ]
-            }
-        });
-
-        const stage = await Stage.findOne({
-            where: {
-                id
-            }
-        });
-
         // #swagger.tags = ['Vote']
+
         try {
+
+            const {id} = req.body;
+
+            const isJury = await Jury.findOne({
+                where: {
+                    [Op.and]: [
+                        {userId: req.user.id},
+                        {stageId: id}
+                    ]
+                }
+            });
+
+            const stage = await Stage.findOne({
+                where: {id}
+            });
+
             return res.json({
                 points: contestData.pointsSystem,
                 isJury: !!isJury,
