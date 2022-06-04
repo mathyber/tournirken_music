@@ -76,6 +76,11 @@ code {
     margin-bottom: 20px;
 }
 
+.data-block__vote {
+    max-height: calc(100vh - 300px);
+    margin-bottom: 0;
+}
+
 .data-block__items {
     height: calc(100vh - 285px);
     border-radius: 4px;

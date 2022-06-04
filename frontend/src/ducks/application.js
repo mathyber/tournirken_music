@@ -19,6 +19,10 @@ const CREATE_EDIT_APP_REQUEST = 'CREATE_EDIT_APP_REQUEST';
 const CREATE_EDIT_APP_SUCCESS = 'CREATE_EDIT_APP_SUCCESS';
 const CREATE_EDIT_APP_ERROR = 'CREATE_EDIT_APP_ERROR';
 
+const SET_STAGE_APPS_REQUEST = 'SET_STAGE_APPS_REQUEST';
+const SET_STAGE_APPS_SUCCESS = 'SET_STAGE_APPS_SUCCESS';
+const SET_STAGE_APPS_ERROR = 'SET_STAGE_APPS_ERROR';
+
 // Initial State
 const initial = {
     application: null,
@@ -95,6 +99,21 @@ export default (state = initial, {type, payload}) => {
                 ...state,
                 loading: false,
             };
+        case SET_STAGE_APPS_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            };
+        case SET_STAGE_APPS_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+            };
+        case SET_STAGE_APPS_ERROR:
+            return {
+                ...state,
+                loading: false,
+            };
         default:
             return state;
     }
@@ -104,6 +123,13 @@ export default (state = initial, {type, payload}) => {
 export const getApp = payload => {
     return {
         type: APP_REQUEST,
+        payload,
+    };
+}
+
+export const setStagesApps = payload => {
+    return {
+        type: SET_STAGE_APPS_REQUEST,
         payload,
     };
 }
@@ -198,11 +224,29 @@ function* changeStateSaga({payload}) {
     }
 }
 
+function* setStageAppsSaga({payload}) {
+    try {
+        const {form, callback} = payload;
+        const result = yield postman.post('/application/setStages/', form);
+        yield put({
+            type: SET_STAGE_APPS_SUCCESS,
+            payload: result
+        });
+        callback && callback();
+    } catch ({response}) {
+        yield put({
+            type: SET_STAGE_APPS_ERROR,
+            payload: response.data,
+        });
+    }
+}
+
 export function* saga() {
     yield all([
         takeEvery(CREATE_EDIT_APP_REQUEST, saveAppSaga),
         takeEvery(APP_REQUEST, appSaga),
         takeEvery(APPS_REQUEST, appsSaga),
         takeEvery(CHANGE_STATE_REQUEST, changeStateSaga),
+        takeEvery(SET_STAGE_APPS_REQUEST, setStageAppsSaga),
     ]);
 }

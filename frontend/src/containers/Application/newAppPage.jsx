@@ -90,7 +90,6 @@ const NewAppPage = (props) => {
                                         value={form.users || null}
                                         onAddItem={(e, {value}) => onChange(e, {name: 'users', value: [...(form.users || []), value]})}
                                         onChange={(e, {value}) => {
-                                            console.log(value)
                                             onChange(e, {name: 'users', value: value})
                                         }}
                                     />

@@ -30,6 +30,10 @@ const doc = {
         {
             "name": "Application",
             "description": "Заявка"
+        },
+        {
+            "name": "Vote",
+            "description": "Голосование"
         }
     ],
     // securityDefinitions: {

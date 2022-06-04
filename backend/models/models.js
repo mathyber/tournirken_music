@@ -167,6 +167,7 @@ module.exports = {
     Dsq,
     Jury,
     ApplicationState,
+    ApplicationStage,
     Application,
     ApplicationUser,
     Point

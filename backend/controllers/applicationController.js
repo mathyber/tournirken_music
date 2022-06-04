@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 const path = require('path');
-const {Application, ApplicationUser, User, ApplicationState} = require("../models/models");
+const {Application, ApplicationUser, User, ApplicationState, ApplicationStage} = require("../models/models");
 const ApiError = require("../error/apiError");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
@@ -94,7 +94,7 @@ class ApplicationController {
 
             apps = await Application.findAndCountAll({
                 where: {
-                    [Op.and] : arrayAnd
+                    [Op.and]: arrayAnd
                 },
                 include: [
                     {
@@ -135,6 +135,43 @@ class ApplicationController {
             });
 
             return res.json(app);
+        } catch (err) {
+            console.log(err);
+            next(err)
+        }
+    }
+
+    async setStagesApplications(req, res, next) {
+        // #swagger.tags = ['Application']
+
+        try {
+            let {stages} = req.body;
+
+            Object.keys(stages).forEach(key => {
+
+                stages[key].forEach(st => {
+                    ApplicationStage.create({
+                        stageId: key,
+                        applicationId: st
+                    }).then(() => console.log('SAVE'))
+                        .catch((e) => {
+                            console.log(e)
+                        });
+                    const state = ApplicationState.findOne({
+                        where: {name: 'IN_CONTEST'}
+                    })
+
+                    const application = Application.update({
+                        applicationStateId: state.id
+                    }, {
+                        where: {st}
+                    });
+                });
+            });
+
+            return res.json({
+                message: 'Сохранено успешно!'
+            });
         } catch (err) {
             console.log(err);
             next(err)

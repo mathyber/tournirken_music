@@ -10,4 +10,6 @@ export const APPS_LINK = '/season/:id/apps';
 export const SEASON_SETTINGS_LINK = '/season/:id/settings';
 export const USER_LINK = '/user/:id';
 export const APP_LINK = '/app/:id';
+export const STAGE_LINK = '/stage/:id';
 export const NEW_APP_LINK = '/season/:id/new_app/';
+export const VOTE_LINK = '/vote/:id/';
