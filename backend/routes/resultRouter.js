@@ -5,7 +5,8 @@ const checkRole = require("../middleware/checkRoleMiddleware");
 
 // #swagger.tags = ['Result']
 router.post('/:id', checkRole('ADMIN'), resultController.result);
-router.post('/:id/table', resultController.resultTable);
+router.post('/:id/save', checkRole('ADMIN'), resultController.resultSave);
+router.post('/:id/table', checkRole('ADMIN'), resultController.resultTable);
 //router.post('/:id/table', checkRole('ADMIN'), resultController.resultTable);
 
 module.exports = router;

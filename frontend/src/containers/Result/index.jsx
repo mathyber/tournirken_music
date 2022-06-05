@@ -2,10 +2,11 @@ import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {getResult, resultDataSelector} from "../../ducks/result";
 import {useParams} from "react-router";
-import {Label, Tab} from "semantic-ui-react";
+import {Button, Label, Tab} from "semantic-ui-react";
 import {getStage, stageSelector} from "../../ducks/season";
-import {getVoteSystem, voteSystemSelector} from "../../ducks/vote";
+import {getVoteSystem, saveVote, voteSystemSelector} from "../../ducks/vote";
 import ResultTable from "../../components/ResultTable";
+import ResultData from "../../components/ResultData";
 
 const Result = () => {
     const dispatch = useDispatch();
@@ -16,14 +17,17 @@ const Result = () => {
     const {points: voteSystem = [], voteOpen} = useSelector(voteSystemSelector);
 
     useEffect(() => {
-        dispatch(getResult({
-            id: params?.id
-        }));
         params?.id && dispatch(getStage(params.id));
         dispatch(getVoteSystem({
             id: params.id
         }));
     }, [params]);
+
+    const saveVoting = () => {
+        dispatch(saveVote({
+            id: params.id
+        }))
+    }
 
     const panes = [
         {
@@ -33,6 +37,10 @@ const Result = () => {
         {
             menuItem: `Зрители`,
             render: () => <ResultTable id={params.id} points={voteSystem} apps={stageData?.applications}/>
+        },
+        {
+            menuItem: `РЕЗУЛЬТАТЫ`,
+            render: () => <ResultData juries={stageData?.users} id={params.id} points={voteSystem} apps={stageData?.applications}/>
         }
     ]
 
@@ -44,8 +52,10 @@ const Result = () => {
                     {voteOpen && <Label color='red'>
                         Идет голосование
                     </Label>}
+                    {!voteOpen && <Button size="mini" color='green' onClick={saveVoting}>
+                        Подтвердить результаты
+                    </Button>}
                 </div>
-
             </h1>
             <Tab
                 menu={{ color: 'violet', inverted: true }}

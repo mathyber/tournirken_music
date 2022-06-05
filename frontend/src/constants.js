@@ -24,6 +24,6 @@ export const statuses = [
     },
     {
         name: 'IN_CONTEST',
-        next: []
+        next: ['DSQ']
     },
 ]

@@ -51,7 +51,7 @@ const StageSettings = ({}) => {
 
 
     useEffect(() => {
-        stageData && stageData.seasonId && loadData(stageData.seasonId);
+        stageData && stageData.seasonId && stageData.nextStage && loadData(stageData.seasonId);
     }, [stageData]);
 
     const loadData = (id) => {

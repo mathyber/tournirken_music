@@ -11,6 +11,10 @@ const VOTE_REQUEST = 'VOTE_REQUEST';
 const VOTE_SUCCESS = 'VOTE_SUCCESS';
 const VOTE_ERROR = 'VOTE_ERROR';
 
+const SAVE_VOTE_REQUEST = 'SAVE_VOTE_REQUEST';
+const SAVE_VOTE_SUCCESS = 'SAVE_VOTE_SUCCESS';
+const SAVE_VOTE_ERROR = 'SAVE_VOTE_ERROR';
+
 const DELETE_VOTE_REQUEST = 'DELETE_VOTE_REQUEST';
 const DELETE_VOTE_SUCCESS = 'DELETE_VOTE_SUCCESS';
 const DELETE_VOTE_ERROR = 'DELETE_VOTE_ERROR';
@@ -70,6 +74,21 @@ export default (state = initial, {type, payload}) => {
                 ...state,
                 loading: false,
             };
+        case SAVE_VOTE_REQUEST:
+            return {
+                ...state,
+                loading: true
+            };
+        case SAVE_VOTE_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+            };
+        case SAVE_VOTE_ERROR:
+            return {
+                ...state,
+                loading: false,
+            };
         default:
             return state;
     }
@@ -79,6 +98,13 @@ export default (state = initial, {type, payload}) => {
 export const getVoteSystem = payload => {
     return {
         type: VOTE_SYSTEM_REQUEST,
+        payload,
+    };
+}
+
+export const saveVote = payload => {
+    return {
+        type: SAVE_VOTE_REQUEST,
         payload,
     };
 }
@@ -135,6 +161,23 @@ function* voteSaga({payload}) {
     }
 }
 
+function* saveVoteSaga({payload}) {
+    try {
+        const {id, callback} = payload;
+        const result = yield postman.post(`/result/${id}/save`);
+        yield put({
+            type: SAVE_VOTE_SUCCESS,
+            payload: result
+        });
+        callback && callback();
+    } catch ({response}) {
+        yield put({
+            type: SAVE_VOTE_ERROR,
+            payload: response.data,
+        });
+    }
+}
+
 function* deleteVoteSaga({payload}) {
     try {
         const {id, userId, callback} = payload;
@@ -157,5 +200,6 @@ export function* saga() {
         takeEvery(VOTE_SYSTEM_REQUEST, voteSystemSaga),
         takeEvery(VOTE_REQUEST, voteSaga),
         takeEvery(DELETE_VOTE_REQUEST, deleteVoteSaga),
+        takeEvery(SAVE_VOTE_REQUEST, saveVoteSaga),
     ]);
 }

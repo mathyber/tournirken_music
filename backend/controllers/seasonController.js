@@ -270,7 +270,7 @@ class SeasonController {
                 })
 
                 Application.update({
-                    stateId: state.id,
+                    applicationStateId: state.id,
                 }, {
                     where: {
                         id: app.app
