@@ -1,0 +1,12 @@
+.table-row {
+  &_green {
+    background-color: green;
+  }
+  &_yellow {
+    background-color: #7a7526;
+  }
+  &_dsq {
+    background-color: grey;
+    opacity: 0.4;
+  }
+}

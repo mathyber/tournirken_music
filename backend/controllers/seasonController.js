@@ -1,4 +1,4 @@
-const {Season, Stage} = require("../models/models");
+const {Season, Stage, ApplicationState, Application, ApplicationStage, User, ApplicationUser, Jury} = require("../models/models");
 const Sequelize = require("sequelize");
 const ApiError = require("../error/apiError");
 const Op = Sequelize.Op;
@@ -83,7 +83,17 @@ class SeasonController {
                     }
                     if (semifinals && semifinals.length) {
                         semifinals.forEach(sf => {
-                            let {id, name, juryPercent = 0, winCount, secondChanceCount, secondChanceStage, count, endVote, startVote} = sf;
+                            let {
+                                id,
+                                name,
+                                juryPercent = 0,
+                                winCount,
+                                secondChanceCount,
+                                secondChanceStage,
+                                count,
+                                endVote,
+                                startVote
+                            } = sf;
                             let sfStage = sf.id ? Stage.findOne({where: {id: sf.id}}) : null;
                             if (sfStage) {
                                 Stage.update({
@@ -115,7 +125,7 @@ class SeasonController {
                 }
             }
 
-            season.stages.forEach(s => {
+            season.stages?.forEach(s => {
                 if ((!final || final.id !== s.id) && (!secondChance || secondChance.id !== s.id) && !semifinals.find(sf => sf.id === s.id)) {
                     Stage.destroy({
                         where: {id: s.id}
@@ -184,6 +194,93 @@ class SeasonController {
             if (!season) return next(ApiError.badRequest('Сезон не существует'));
 
             return res.json(season);
+        } catch (err) {
+            console.log(err);
+            next(err)
+        }
+    }
+
+    async setJury(req, res, next) {
+        // #swagger.tags = ['Season']
+        try {
+            let {id} = req.params;
+            let {juries} = req.body;
+
+            juries.forEach(jury => {
+                Jury.create({
+                    stageId: id,
+                    userId: jury
+                });
+            })
+
+            return res.json({
+                message: 'Состав жюри сохранен!'
+            });
+        } catch (err) {
+            console.log(err);
+            next(err)
+        }
+    }
+
+    async getStage(req, res, next) {
+        // #swagger.tags = ['Season']
+        try {
+            let {id} = req.params;
+
+            let stage = await Stage.findOne({
+                where: {id},
+                include: [
+                    {model: Season, as: 'season'},
+                    {model: Application, include: [{model: User, as: 'users'}], as: 'applications'},
+                    {model: User, as: 'users'},
+                ]
+            });
+
+            if (!stage) return next(ApiError.badRequest('Стадия не существует'));
+
+            return res.json(stage);
+        } catch (err) {
+            console.log(err);
+            next(err)
+        }
+    }
+
+    async setStage(req, res, next) {
+        // #swagger.tags = ['Season']
+        try {
+            let {id} = req.params;
+            let {apps} = req.body;
+
+            const stage = await Stage.findOne({
+                where: {id},
+            });
+
+            if (!stage) return next(ApiError.badRequest('Стадия не существует'));
+
+            apps.forEach(app => {
+
+                ApplicationStage.create({
+                    stageId: id,
+                    applicationId: app.app,
+                    number: app.number
+                })
+
+                const state = ApplicationState.findOne({
+                    where: {name: 'IN_CONTEST'}
+                })
+
+                Application.update({
+                    applicationStateId: state.id,
+                }, {
+                    where: {
+                        id: app.app
+                    }
+                })
+            })
+
+            return res.json({
+                message: 'Сохранено!'
+            });
         } catch (err) {
             console.log(err);
             next(err)

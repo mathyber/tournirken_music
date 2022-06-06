@@ -27,6 +27,7 @@ const UserRole = sequelize.define('user_role', {
 //Стадия - заявка
 const ApplicationStage = sequelize.define('application_stage', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    number: {type: DataTypes.INTEGER}
 });
 
 //Сезон конкурса
@@ -132,6 +133,31 @@ Point.belongsTo(User);
 // Role.create({name: 'ADMIN'});
 // Role.create({name: 'ORGANIZER'});
 
+// ApplicationState.create({
+//     name: 'NEW',
+//     description: 'Новая заявка'
+// });
+// ApplicationState.create({
+//     name: 'REJECTED',
+//     description: 'Заявка отклонена - не соответствует требованиям'
+// });
+// ApplicationState.create({
+//     name: 'VERIFIED',
+//     description: 'Заявка проверена'
+// });
+// ApplicationState.create({
+//     name: 'ACCEPTED',
+//     description: 'Заявка принята к участию в конкурсе'
+// });
+// ApplicationState.create({
+//     name: 'IN_CONTEST',
+//     description: 'Заявка участвует в конкурсе'
+// });
+// ApplicationState.create({
+//     name: 'DSQ',
+//     description: 'Заявка дисквалифицирована'
+// });
+
 module.exports = {
     User,
     Role,
@@ -141,6 +167,7 @@ module.exports = {
     Dsq,
     Jury,
     ApplicationState,
+    ApplicationStage,
     Application,
     ApplicationUser,
     Point

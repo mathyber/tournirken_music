@@ -70,6 +70,17 @@ code {
     justify-content: space-between;
 }
 
+.data-block__table {
+    max-height: calc(100vh - 280px);
+    overflow: auto;
+    margin-bottom: 20px;
+}
+
+.data-block__vote {
+    max-height: calc(100vh - 300px);
+    margin-bottom: 0;
+}
+
 .data-block__items {
     height: calc(100vh - 285px);
     border-radius: 4px;
@@ -94,7 +105,7 @@ code {
     margin-top: 20px !important;
     overflow: hidden;
     overflow-y: auto;
-    height: calc(100vh - 275px);
+    height: calc(100vh - 279px);
 }
 
 .form_stages {
@@ -106,6 +117,15 @@ code {
     width: 100% !important;
 }
 
-.m-b-20 {
+.m-b-50 {
     margin-bottom: 50px!important;
+}
+
+.m-b-5 {
+    margin-bottom: 5px!important;
+}
+
+.table__header {
+    position: sticky;
+    top: 0;
 }

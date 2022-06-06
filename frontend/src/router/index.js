@@ -1,14 +1,15 @@
 import React from 'react';
 import {Route, Routes} from 'react-router-dom';
 import {
+    APP_LINK, APPS_LINK,
     HOME_LINK,
-    LOGIN_LINK,
+    LOGIN_LINK, NEW_APP_LINK,
     NEW_SEASON_LINK,
     PERSONAL_LINK,
     PROFILE_LINK,
-    REG_LINK, SEASON_LINK,
-    SEASONS_LINK,
-    USER_LINK
+    REG_LINK, RESULT_LINK, SEASON_LINK, SEASON_SETTINGS_LINK,
+    SEASONS_LINK, STAGE_LINK,
+    USER_LINK, VOTE_LINK
 } from "./links";
 import PrivateRoute from "./privateRoute";
 import Login from "../containers/Login";
@@ -21,6 +22,12 @@ import Profile from "../containers/Users/profile";
 import User from "../containers/Users/user";
 import Seasons from "../containers/Season/seasonsPage";
 import SeasonForm from "../containers/Season/seasonForm";
+import NewAppPage from "../containers/Application/newAppPage";
+import AppsPage from "../containers/Application/appsPage";
+import SeasonSettings from "../containers/Season/seasonSettings";
+import StageSettings from "../containers/Season/stageSettings";
+import Vote from "../containers/Vote";
+import Result from "../containers/Result";
 
 const MainRoute = () => {
     const isAuth = useSelector(isAuthSelector);
@@ -59,6 +66,48 @@ const MainRoute = () => {
                    element={
                        <PrivateRoute admin isAuth={isAuth}>
                            <SeasonForm/>
+                       </PrivateRoute>
+                   }
+            />
+            <Route path={NEW_APP_LINK}
+                   element={
+                       <PrivateRoute admin isAuth={isAuth}>
+                           <NewAppPage/>
+                       </PrivateRoute>
+                   }
+            />
+            <Route path={APPS_LINK}
+                   element={
+                       <PrivateRoute admin isAuth={isAuth}>
+                           <AppsPage/>
+                       </PrivateRoute>
+                   }
+            />
+            <Route path={SEASON_SETTINGS_LINK}
+                   element={
+                       <PrivateRoute admin isAuth={isAuth}>
+                           <SeasonSettings semifinalsSettings/>
+                       </PrivateRoute>
+                   }
+            />
+            <Route path={STAGE_LINK}
+                   element={
+                       <PrivateRoute admin isAuth={isAuth}>
+                           <StageSettings/>
+                       </PrivateRoute>
+                   }
+            />
+            <Route path={VOTE_LINK}
+                   element={
+                       <PrivateRoute admin isAuth={isAuth}>
+                           <Vote/>
+                       </PrivateRoute>
+                   }
+            />
+            <Route path={RESULT_LINK}
+                   element={
+                       <PrivateRoute admin isAuth={isAuth}>
+                           <Result/>
                        </PrivateRoute>
                    }
             />
