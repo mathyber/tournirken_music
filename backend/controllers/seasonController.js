@@ -125,7 +125,7 @@ class SeasonController {
                 }
             }
 
-            season.stages.forEach(s => {
+            season.stages?.forEach(s => {
                 if ((!final || final.id !== s.id) && (!secondChance || secondChance.id !== s.id) && !semifinals.find(sf => sf.id === s.id)) {
                     Stage.destroy({
                         where: {id: s.id}

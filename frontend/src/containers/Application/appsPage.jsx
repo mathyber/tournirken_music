@@ -44,7 +44,7 @@ const AppsPage = (props) => {
 
         return st.next.map(n => (
             <Button className='m-b-5' color='green' key={`${id}_${n}`} onClick={() => changeState(id, n)}>
-                to {n}
+                {n}
             </Button>
         ))
     };
