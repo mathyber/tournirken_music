@@ -113,8 +113,6 @@ async function resultCalc(id, juries = [], next) {
 
     const proc = stage.juryPercent !== 0 ? ((notJuryPointsSumFact * 100) / notJuryPointsSum) : 100;
 
-    console.log(juryPointsSum, notJuryPointsSum, notJuryPointsSumFact, proc)
-console.log(votePoints)
     let pVotes = Object.keys(votePoints).map(key => ({
         points: Math.round((votePoints[key] * 100) / proc),
         app: key

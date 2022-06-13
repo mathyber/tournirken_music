@@ -1,4 +1,13 @@
-const {Season, Stage, ApplicationState, Application, ApplicationStage, User, ApplicationUser, Jury} = require("../models/models");
+const {
+    Season,
+    Stage,
+    ApplicationState,
+    Application,
+    ApplicationStage,
+    User,
+    ApplicationUser,
+    Jury
+} = require("../models/models");
 const Sequelize = require("sequelize");
 const ApiError = require("../error/apiError");
 const Op = Sequelize.Op;
@@ -206,12 +215,24 @@ class SeasonController {
             let {id} = req.params;
             let {juries} = req.body;
 
+            const juriesOld = await Jury.findAll({
+                where: {stageId: id}
+            });
+
+            const juriesOldIds = juriesOld.length ? juriesOld.map(jo => jo.userId) : null;
+
+            if (juriesOldIds) {
+                Jury.destroy({
+                    where: {stageId: id}
+                })
+            }
+
             juries.forEach(jury => {
                 Jury.create({
                     stageId: id,
                     userId: jury
                 });
-            })
+            });
 
             return res.json({
                 message: 'Состав жюри сохранен!'
@@ -231,7 +252,15 @@ class SeasonController {
                 where: {id},
                 include: [
                     {model: Season, as: 'season'},
-                    {model: Application, include: [{model: User, as: 'users', attributes: ['id', 'email', 'vk', 'name', 'surname', 'alias']}], as: 'applications'},
+                    {
+                        model: Application,
+                        include: [{
+                            model: User,
+                            as: 'users',
+                            attributes: ['id', 'email', 'vk', 'name', 'surname', 'alias']
+                        }],
+                        as: 'applications'
+                    },
                     {model: User, as: 'users', attributes: ['id', 'email', 'vk', 'name', 'surname', 'alias']},
                 ]
             });
@@ -257,9 +286,13 @@ class SeasonController {
 
             if (!stage) return next(ApiError.badRequest('Стадия не существует'));
 
+            await ApplicationStage.destroy({
+                where: {stageId: id}
+            });
+
             for (const app of apps) {
 
-                ApplicationStage.create({
+                await ApplicationStage.create({
                     stageId: id,
                     applicationId: app.app,
                     number: app.number
