@@ -266,7 +266,8 @@ function* getStageSaga({payload}) {
 
 function* saveSeasonSaga({payload}) {
     try {
-        const result = yield postman.post('/season/createOrEdit', payload);
+        const {form, callback} = payload;
+        const result = yield postman.post('/season/createOrEdit', form);
         if (result?.season?.id){
             yield put(getSeason(result?.season?.id))
         }
@@ -274,6 +275,7 @@ function* saveSeasonSaga({payload}) {
             type: CREATE_SEASON_SUCCESS,
             payload: result
         });
+        callback && callback(result?.season?.id)
     } catch ({response}) {
         yield put({
             type: CREATE_SEASON_ERROR,
