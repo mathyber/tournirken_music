@@ -257,7 +257,7 @@ class SeasonController {
 
             if (!stage) return next(ApiError.badRequest('Стадия не существует'));
 
-            apps.forEach(app => {
+            for (const app of apps) {
 
                 ApplicationStage.create({
                     stageId: id,
@@ -265,7 +265,7 @@ class SeasonController {
                     number: app.number
                 })
 
-                const state = ApplicationState.findOne({
+                const state = await ApplicationState.findOne({
                     where: {name: 'IN_CONTEST'}
                 })
 
@@ -276,7 +276,7 @@ class SeasonController {
                         id: app.app
                     }
                 })
-            })
+            }
 
             return res.json({
                 message: 'Сохранено!'
