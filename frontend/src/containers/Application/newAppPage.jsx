@@ -1,15 +1,17 @@
 import React from 'react';
 import './styles.scss';
 import {useDispatch, useSelector} from "react-redux";
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import {Dimmer, Dropdown, Form, Grid, Loader} from "semantic-ui-react";
 import {createOrEditApp, progressSelector} from "../../ducks/application";
 import {useState} from "react";
+import {HOME_LINK} from "../../router/links";
 
 const NewAppPage = (props) => {
     const dispatch = useDispatch();
     const params = useParams();
     const loading = useSelector(progressSelector);
+    const navigate = useNavigate();
 
     const [form, setForm] = useState({
         season: params.id
@@ -34,7 +36,10 @@ const NewAppPage = (props) => {
         for (let key in form) {
             formData.append(key, JSON.stringify(form[key]));
         }
-        dispatch(createOrEditApp(formData))
+        dispatch(createOrEditApp({
+            formData,
+            callback: () => navigate(HOME_LINK)
+        }))
     }
 
     return (
@@ -88,7 +93,7 @@ const NewAppPage = (props) => {
                                         fluid
                                         allowAdditions
                                         multiple
-                                        value={form.users || null}
+                                        value={form.users || []}
                                         onAddItem={(e, {value}) => onChange(e, {name: 'users', value: [...(form.users || []), value]})}
                                         onChange={(e, {value}) => {
                                             onChange(e, {name: 'users', value: value})

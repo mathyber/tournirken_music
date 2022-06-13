@@ -164,11 +164,13 @@ export const progressSelector = createSelector(stateSelector,state => state.load
 // Saga
 function* saveAppSaga({payload}) {
     try {
-        const result = yield postman.post('/application/new', payload);
+        const {formData, callback} = payload;
+        const result = yield postman.post('/application/new', formData);
         yield put({
             type: CREATE_EDIT_APP_SUCCESS,
             payload: result
         });
+        callback && callback();
     } catch ({response}) {
         yield put({
             type: CREATE_EDIT_APP_ERROR,
