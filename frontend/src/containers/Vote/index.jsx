@@ -20,8 +20,8 @@ const Vote = () => {
     // const seasonData = useSelector(seasonSelector);
 
     const stageData = useSelector(stageSelector);
-    const {points: voteSystem = [], isJury, voteOpen} = useSelector(voteSystemSelector);
-
+    const {points: voteSystemPrev = [], isJury, voteOpen} = useSelector(voteSystemSelector);
+    const [voteSystem, setVoteSystem] = useState(voteSystemPrev);
     // const isAdmin = useSelector(isAdminSelector);
     // const appsData = useSelector(state => appsSelector(state));
 
@@ -33,6 +33,16 @@ const Vote = () => {
         }));
     }, [params]);
 
+    useEffect(() => {
+        const l = stageData?.applications?.filter(a => a.applicationStateId !== 6).length;
+        if (l < voteSystemPrev.length) {
+            let vS = [...voteSystemPrev];
+            vS.splice(0, voteSystemPrev.length - l);
+            console.log(vS)
+            setVoteSystem(vS)
+        } else setVoteSystem(voteSystemPrev);
+    }, [stageData, voteSystemPrev]);
+
     const [points, setPoints] = useState({});
     const [pt, setPt] = useState();
 
@@ -41,7 +51,8 @@ const Vote = () => {
     const save = () => {
         dispatch(setVotePoints({
             id: params.id,
-            points
+            points,
+           // callback: () =>
         }));
     };
 
@@ -73,6 +84,7 @@ const Vote = () => {
                 <div className='m-b-5'>
                     {voteSystem.map(point => (
                         <Button
+                            key={'pt_'+point}
                             color='violet'
                             onClick={() => setPt(pt === point ? null : point)}
                             disabled={points[point]}
@@ -107,7 +119,7 @@ const Vote = () => {
                                     </Table.Header>
                                     <Table.Body>
                                         {
-                                            stageData?.applications?.map(app => (
+                                            stageData?.applications?.filter(a => a.applicationStateId !== 6).map(app => (
                                                 <Table.Row key={app.id}>
                                                     <Table.Cell>
                                                         <b>{app?.application_stage.number}</b>

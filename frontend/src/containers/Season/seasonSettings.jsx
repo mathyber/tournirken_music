@@ -21,69 +21,12 @@ const SeasonSettings = ({semifinalsSettings}) => {
     const loading = useSelector(progressSelector);
     const seasonData = useSelector(seasonSelector);
     const isAdmin = useSelector(isAdminSelector);
-    const apps = useSelector(state => appsSelector(state));
 
     const [form, setForm] = useState({});
 
-
-    const onChange = (e, {name, value}) => {
-        setForm(f => ({
-            ...f,
-            [name]: value
-        }))
-    };
-
-    const setAppsToStage = (value, id) => {
-        onChange(null, {
-            name: 'stages',
-            value: {
-                ...form.stages,
-                [id]: value
-            }
-        })
-    };
-
-    console.log(seasonData)
-
     useEffect(() => {
         params?.id && dispatch(getSeason(params.id));
-        loadData();
     }, [params]);
-
-    const loadData = () => {
-        dispatch(getApps({
-            page: 0,
-            limit: 1000000,
-            seasonId: params.id,
-            state: 'ACCEPTED'
-        }));
-    }
-
-    console.log(form)
-
-    const options = (id) => {
-
-        let appRows = apps.rows || [];
-        let usersIdsInOthers = [];
-        const dataStages = form.stages || {};
-        for (let key in dataStages) {
-            if (key != id) {
-                usersIdsInOthers.push(...(dataStages[key] || []));
-            }
-        }
-
-        let filter = appRows.filter(r => !usersIdsInOthers.includes(r.id)).map(u => ({
-            value: u.id,
-            name: u.id,
-            text: `${u.songName} (${u.users.map((us) => us.name + " " + us.surname)})`
-        }))
-
-        return filter;
-    }
-
-    const save = () => {
-        console.log('save', form)
-    };
 
     const saveStages = () => {
         dispatch(setStagesApps({

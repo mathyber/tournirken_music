@@ -8,7 +8,7 @@ import {getSeason, progressSelector, saveSeason, seasonSelector} from "../../duc
 import {toFormat} from "../../utils/time";
 import {toast} from "react-toastify";
 import {isAdminSelector} from "../../ducks/user";
-import {APPS_LINK, NEW_APP_LINK, SEASON_SETTINGS_LINK} from "../../router/links";
+import {APPS_LINK, NEW_APP_LINK, SEASON_LINK, SEASON_SETTINGS_LINK} from "../../router/links";
 
 const SeasonForm = () => {
 
@@ -50,7 +50,10 @@ const SeasonForm = () => {
     const save = () => {
         if (form.secondChance && !form.semifinals.find(sf => sf.secondChanceCount)) {
             toast.warning('Во второй шанс не выходят. Укажите минимум одно участника, выходящего во второй шанс')
-        } else dispatch(saveSeason(form));
+        } else dispatch(saveSeason({
+            form,
+            callback: params?.id ? null : (id) => navigate(SEASON_LINK.replace(':id', id))
+        }));
     };
 
     const addSemifinal = () => {
@@ -167,11 +170,12 @@ const SeasonForm = () => {
                                     disabled={!isAdmin}
                                     label='Описание'
                                     name='description'
-                                    value={form.description}
+                                    value={form.description || ''}
                                     onChange={onChange}
                                 />
                                 <Form.Input
                                     disabled={!isAdmin}
+                                    max={form.dateEnd}
                                     label='Дата начала приема заявок'
                                     name='dateStart'
                                     type='datetime-local'
@@ -180,6 +184,7 @@ const SeasonForm = () => {
                                 />
                                 <Form.Input
                                     disabled={!isAdmin}
+                                    min={form.dateStart}
                                     label='Дата окончания приема заявок'
                                     name='dateEnd'
                                     type='datetime-local'

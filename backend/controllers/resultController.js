@@ -78,11 +78,19 @@ async function resultCalc(id, juries = [], next) {
 
     let votePoints = {}
 
-    const pointsData = await Point.findAll({
+    let pointsData = [];
+
+    if (stage.juryPercent !== 0) pointsData = await Point.findAll({
         where: {
             stageId: id,
             [Op.not]:
                 [{userId: juries}]
+        }
+    });
+
+    if (stage.juryPercent === 0) pointsData = await Point.findAll({
+        where: {
+            stageId: id
         }
     });
 
@@ -93,9 +101,9 @@ async function resultCalc(id, juries = [], next) {
             }, 0);
     })
 
-    const juryPointsSum = [...result].pop().pointsAll.map(p => p.points).reduce(function (sum, elem) {
+    const juryPointsSum = stage.juryPercent !== 0 ? [...result].pop().pointsAll.map(p => p.points).reduce(function (sum, elem) {
         return sum + elem;
-    }, 0);
+    }, 0) : 0;
 
     const notJuryPointsSum = ((juryPointsSum * 100) / stage.juryPercent) - juryPointsSum;
 
@@ -103,9 +111,7 @@ async function resultCalc(id, juries = [], next) {
         return sum + elem;
     }, 0);
 
-    const proc = (notJuryPointsSumFact * 100) / notJuryPointsSum;
-
-    console.log(juryPointsSum, notJuryPointsSum, notJuryPointsSumFact, proc)
+    const proc = stage.juryPercent !== 0 ? ((notJuryPointsSumFact * 100) / notJuryPointsSum) : 100;
 
     let pVotes = Object.keys(votePoints).map(key => ({
         points: Math.round((votePoints[key] * 100) / proc),
@@ -126,7 +132,7 @@ async function resultCalc(id, juries = [], next) {
         isJury: false,
         points: pVotes,
         pointsAll: pVotes.map(pV => ({
-            points: pV.points + [...result].pop().pointsAll.find(p => p.app.toString() === pV.app.toString()).points,
+            points: pV.points + (stage.juryPercent !== 0 ? [...result].pop().pointsAll.find(p => p.app.toString() === pV.app.toString()).points : 0),
             app: pV.app
         })).sort(
             function (a, b) {

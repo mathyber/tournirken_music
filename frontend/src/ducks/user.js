@@ -12,6 +12,10 @@ const USER_REQUEST = 'USER_REQUEST';
 const USER_SUCCESS = 'USER_SUCCESS';
 const USER_ERROR = 'USER_ERROR';
 
+const USERS_REQUEST = 'USERS_REQUEST';
+const USERS_SUCCESS = 'USERS_SUCCESS';
+const USERS_ERROR = 'USERS_ERROR';
+
 const NEW_PASSWORD_REQUEST = 'NEW_PASSWORD_REQUEST';
 const NEW_PASSWORD_SUCCESS = 'NEW_PASSWORD_SUCCESS';
 const NEW_PASSWORD_ERROR = 'NEW_PASSWORD_ERROR';
@@ -45,7 +49,8 @@ const initial = {
     error: '',
     profile: {},
     saveLoading: false,
-    user: {}
+    user: {},
+    users: [],
 };
 
 // Reducer
@@ -112,6 +117,23 @@ export default (state = initial, {type, payload}) => {
             return {
                 ...state,
                 user: {},
+                saveLoading: false
+            };
+        case USERS_REQUEST:
+            return {
+                ...state,
+                saveLoading: true
+            };
+        case USERS_SUCCESS:
+            return {
+                ...state,
+                users: payload,
+                saveLoading: false
+            };
+        case USERS_ERROR:
+            return {
+                ...state,
+                users: [],
                 saveLoading: false
             };
         case NEW_PASSWORD_REQUEST:
@@ -196,6 +218,13 @@ export const newRoleForUser = payload => {
     };
 }
 
+export const getUsers = payload => {
+    return {
+        type: USERS_REQUEST,
+        payload,
+    };
+}
+
 export const logout = () => {
     localStorage.removeItem(ACCESS_TOKEN);
     window.location.reload();
@@ -213,6 +242,7 @@ export const saveProgressSelector = createSelector(stateSelector,state => state.
 export const regProgressSelector = createSelector(stateSelector,state => state.regProgress);
 export const profileSelector = createSelector(stateSelector,state => state.profile);
 export const userSelector = createSelector(stateSelector,state => state.user);
+export const usersSelector = createSelector(stateSelector,state => state.users);
 
 // Saga
 function* loginSaga({payload}) {
@@ -257,6 +287,21 @@ function* userSaga({payload}) {
     } catch ({response}) {
         yield put({
             type: USER_ERROR,
+            payload: response.data,
+        });
+    }
+}
+
+function* usersSaga({payload}) {
+    try {
+        const result = yield postman.post(`/user/users`, payload);
+        yield put({
+            type: USERS_SUCCESS,
+            payload: result
+        });
+    } catch ({response}) {
+        yield put({
+            type: USERS_ERROR,
             payload: response.data,
         });
     }
@@ -364,5 +409,6 @@ export function* saga() {
         takeEvery(USER_REQUEST, userSaga),
         takeEvery(BAN_REQUEST, banUserSaga),
         takeEvery(NEW_ROLE_REQUEST, updateRoleSaga),
+        takeEvery(USERS_REQUEST, usersSaga),
     ]);
 }

@@ -50,7 +50,8 @@ export const getInfo = payload => {
 const stateSelector = state => state.contest;
 export const infoSelector = createSelector(stateSelector, state => ({
     name: state.name,
-    description: state.description
+    description: state.description,
+    seasons: state.seasons
 }));
 export const progressSelector = createSelector(stateSelector,state => state.loadingInfo);
 

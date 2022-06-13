@@ -292,11 +292,12 @@ class UserController {
             users = await User.findAndCountAll({
                 where: {
                     [Op.or]: [
-                        {name: {[Op.like]: `%${search}%`}},
-                        {surname: {[Op.like]: `%${search}%`}},
-                        {alias: {[Op.like]: `%${search}%`}},
-                    ]
+                        {name: {[Op.iLike]: `%${search}%`}},
+                        {surname: {[Op.iLike]: `%${search}%`}},
+                        {alias: {[Op.iLike]: `%${search}%`}},
+                    ],
                 },
+                attributes: ['id', 'email', 'vk', 'name', 'surname', 'alias'],
                 limit,
                 offset
             })

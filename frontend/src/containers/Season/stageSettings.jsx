@@ -11,13 +11,14 @@ import {
     setJury,
     stageSelector
 } from "../../ducks/season";
-import {isAdminSelector} from "../../ducks/user";
-import {Button, Dropdown, Form, Grid, Label, Segment, Table} from "semantic-ui-react";
+import {getUsers, isAdminSelector, usersSelector} from "../../ducks/user";
+import {Button, Dimmer, Dropdown, Form, Grid, Label, Loader, Segment, Table} from "semantic-ui-react";
 import {appsSelector, getApps, setStagesApps} from "../../ducks/application";
 import {COUNT_ITEMS} from "../../constants";
 import {toast} from "react-toastify";
 import pkg from "../../../package.json";
 import {RESULT_LINK, STAGE_LINK, USER_LINK} from "../../router/links";
+import {unique} from "../../utils/array";
 
 const StageSettings = ({}) => {
 
@@ -29,6 +30,8 @@ const StageSettings = ({}) => {
     const navigate = useNavigate();
     const loading = useSelector(progressSelector);
     const seasonData = useSelector(seasonSelector);
+    const [userData, setUserData] = useState([]);
+    const users = useSelector(usersSelector);
 
     const stageData = useSelector(stageSelector);
 
@@ -44,14 +47,17 @@ const StageSettings = ({}) => {
         }))
     };
 
+    const searchUsers = (value) => {
+        dispatch(getUsers({search: value}));
+    }
+
     useEffect(() => {
-        //params?.id && dispatch(getSeason(params.id));
         params?.id && dispatch(getStage(params.id));
     }, [params]);
 
 
     useEffect(() => {
-        stageData && stageData.seasonId && stageData.nextStage && loadData(stageData.seasonId);
+        isAdmin && stageData && stageData.seasonId && stageData.nextStage && loadData(stageData.seasonId);
     }, [stageData]);
 
     const loadData = (id) => {
@@ -73,7 +79,7 @@ const StageSettings = ({}) => {
 
     useEffect(() => {
         setApps({
-            rows: [...(stageData?.applications ? stageData.applications.map(app => app) : []), ...(appsData.rows || [])]
+            rows: unique([...(stageData?.applications ? stageData.applications.map(app => app) : []), ...(appsData.rows || [])])
         });
     }, [appsData, stageData]);
 
@@ -105,7 +111,10 @@ const StageSettings = ({}) => {
     };
 
     const row = (app, isNew, indx) => {
-        return <Table.Row key={app.id}>
+
+        const isDsq = app.applicationStateId === 6;
+
+        return <Table.Row key={'key_'+app.id} className={isDsq && 'table-row_dsq'}>
             <Table.Cell>
                 <b>{!isNew && indx}</b>
             </Table.Cell>
@@ -115,7 +124,7 @@ const StageSettings = ({}) => {
                             type="audio/mpeg"/>
                 </audio>
             </Table.Cell>
-            <Table.Cell>
+            {isAdmin && <Table.Cell>
                 {app.users?.map((user, index) => (
                     <div key={user.id + "_" + index}>
                         <a style={{color: 'white'}}
@@ -125,15 +134,15 @@ const StageSettings = ({}) => {
                         </a>
                     </div>
                 ))}
-            </Table.Cell>
+            </Table.Cell>}
             <Table.Cell>
                 {app.originalSongName}
             </Table.Cell>
             <Table.Cell>
                 {app.songName}
             </Table.Cell>
-            <Table.Cell>
-                {isNew && <Button
+            {isAdmin && <Table.Cell>
+                {isNew && !isDsq && <Button
                     disabled={stageData.count && stageData.count <= participants.length}
                     color='green' className='m-b-5' icon='plus'
                     onClick={() => addPtr(app.id)}/>}
@@ -141,12 +150,15 @@ const StageSettings = ({}) => {
                     !isNew && <Button color='red' className='m-b-5' icon='delete'
                                       onClick={() => delPtr(app.id)}/>
                 }
-            </Table.Cell>
+            </Table.Cell>}
         </Table.Row>
     }
 
     return (
         <div className='container'>
+            {loading && <Dimmer active={loading}>
+                <Loader inverted size='large'>Loading</Loader>
+            </Dimmer>}
             <h1>Стадия: {stageData.name}, сезон: {stageData.season?.name}</h1>
             <Grid>
                 <Grid.Row>
@@ -160,16 +172,16 @@ const StageSettings = ({}) => {
                                         <Table.HeaderCell>
                                             Аудио
                                         </Table.HeaderCell>
-                                        <Table.HeaderCell>
+                                        {isAdmin && <Table.HeaderCell>
                                             Участник(и)
-                                        </Table.HeaderCell>
+                                        </Table.HeaderCell>}
                                         <Table.HeaderCell>
                                             Песня-оригинал
                                         </Table.HeaderCell>
                                         <Table.HeaderCell>
                                             Название заявки
                                         </Table.HeaderCell>
-                                        <Table.HeaderCell/>
+                                        {isAdmin && <Table.HeaderCell/>}
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
@@ -183,34 +195,38 @@ const StageSettings = ({}) => {
                             </Table>
                         </div>
 
-                        <h2>Добавить из списка:</h2>
-                        <div className='data-block__table'>
-                            <Table inverted color='grey'>
-                                <Table.Header className='table__header'>
-                                    <Table.Row>
-                                        <Table.HeaderCell/>
-                                        <Table.HeaderCell>
-                                            Аудио
-                                        </Table.HeaderCell>
-                                        <Table.HeaderCell>
-                                            Участник(и)
-                                        </Table.HeaderCell>
-                                        <Table.HeaderCell>
-                                            Песня-оригинал
-                                        </Table.HeaderCell>
-                                        <Table.HeaderCell>
-                                            Название заявки
-                                        </Table.HeaderCell>
-                                        <Table.HeaderCell/>
-                                    </Table.Row>
-                                </Table.Header>
-                                {
-                                    (apps.rows || []).filter(a => !participants.map(prt => prt.app).includes(a.id)).map((app, index) => {
-                                        return row(app, true)
-                                    })
-                                }
-                            </Table>
-                        </div>
+                        {isAdmin && <>
+                            <h2>Добавить из списка:</h2>
+                            <div className='data-block__table'>
+                                <Table inverted color='grey'>
+                                    <Table.Header className='table__header'>
+                                        <Table.Row>
+                                            <Table.HeaderCell/>
+                                            <Table.HeaderCell>
+                                                Аудио
+                                            </Table.HeaderCell>
+                                            <Table.HeaderCell>
+                                                Участник(и)
+                                            </Table.HeaderCell>
+                                            <Table.HeaderCell>
+                                                Песня-оригинал
+                                            </Table.HeaderCell>
+                                            <Table.HeaderCell>
+                                                Название заявки
+                                            </Table.HeaderCell>
+                                            {isAdmin && <Table.HeaderCell/>}
+                                        </Table.Row>
+                                    </Table.Header>
+                                    {
+                                        (apps.rows || []).filter(a => !participants.map(prt => prt.app).includes(a.id)).map((app, index) => {
+                                            console.log(app)
+                                            return row(app, true)
+                                        })
+                                    }
+                                </Table>
+                            </div>
+                        </>}
+
                     </Grid.Column>
 
                     <Grid.Column width={6}>
@@ -246,26 +262,32 @@ const StageSettings = ({}) => {
                             <Form.Field className='m-b-5'>
                                 <label>Члены жюри</label>
                                 <Dropdown
-                                    options={(form.users || []).map(u=>({
-                                        value: u, name: u, text: u
-                                    }))}
-                                    placeholder='Введите id пользователей'
+                                    disabled={!isAdmin}
+                                    options={unique([...(users.rows || []),...(stageData.users || []), ...userData]).map(u => {
+                                        return {key: u.id, text: u.name + " " + u.surname, value: u.id}
+                                    })}
+                                    placeholder='Поиск пользователя'
                                     search
                                     selection
                                     fluid
-                                    allowAdditions
                                     multiple
-                                    value={form.users || null}
-                                    onAddItem={(e, {value}) => onChange(e, {name: 'users', value: [...(form.users || []), value]})}
+                                    value={form.users || []}
+                                    onSearchChange={(e, { searchQuery }) => searchUsers(searchQuery)}
                                     onChange={(e, {value}) => {
-                                        onChange(e, {name: 'users', value: value})
+                                        onChange(e, {name: 'users', value: value});
+                                        let id = value.find(v => !(form.users || []).includes(v));
+                                        if (id) {
+                                            let u = users.rows.find(u => u.id === id);
+                                            setUserData([...userData, u])
+                                        }
                                     }}
                                 />
+
                             </Form.Field>
                             <Grid.Column width={12}>
-                                <Button className='form-btn m-b-5' color='violet'
-                                        onClick={save}
-                                        type='button'>Сохранить</Button>
+                                {isAdmin && <Button className='form-btn m-b-5' color='violet'
+                                         onClick={save}
+                                         type='button'>Сохранить</Button>}
                             </Grid.Column>
                             {/*<Grid.Column width={12}>*/}
                             {/*    <Button className='form-btn m-b-5' color='violet'*/}

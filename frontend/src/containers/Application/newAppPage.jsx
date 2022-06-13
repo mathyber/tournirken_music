@@ -1,19 +1,25 @@
 import React from 'react';
 import './styles.scss';
 import {useDispatch, useSelector} from "react-redux";
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import {Dimmer, Dropdown, Form, Grid, Loader} from "semantic-ui-react";
 import {createOrEditApp, progressSelector} from "../../ducks/application";
 import {useState} from "react";
+import {HOME_LINK} from "../../router/links";
+import {getUsers, usersSelector} from "../../ducks/user";
+import {unique} from "../../utils/array";
 
 const NewAppPage = (props) => {
     const dispatch = useDispatch();
     const params = useParams();
     const loading = useSelector(progressSelector);
+    const users = useSelector(usersSelector);
+    const navigate = useNavigate();
 
     const [form, setForm] = useState({
         season: params.id
     });
+    const [userData, setUserData] = useState([]);
 
     const [file, setFile] = useState(null);
 
@@ -34,7 +40,14 @@ const NewAppPage = (props) => {
         for (let key in form) {
             formData.append(key, JSON.stringify(form[key]));
         }
-        dispatch(createOrEditApp(formData))
+        dispatch(createOrEditApp({
+            formData,
+            callback: () => navigate(HOME_LINK)
+        }))
+    }
+
+    const searchUsers = (value) => {
+      dispatch(getUsers({search: value}));
     }
 
     return (
@@ -73,24 +86,29 @@ const NewAppPage = (props) => {
                                     label='Аудиофайл'
                                     name='audioFile'
                                     onChange={onChangeInputFile}
+                                    accept=".mp3, .m4a, .flac, .wav, .wma"
                                 />
 
                                 <Form.Field>
                                     <label>Заявка подается совместно с</label>
                                     <Dropdown
-                                        options={(form.users || []).map(u=>({
-                                            value: u, name: u, text: u
-                                        }))}
-                                        placeholder='Введите id пользователей'
+                                        options={unique([...(users.rows || []), ...userData]).map(u => {
+                                            return {key: u.id, text: u.name + " " + u.surname, value: u.id}
+                                        })}
+                                        placeholder='Поиск пользователя'
                                         search
                                         selection
                                         fluid
-                                        allowAdditions
                                         multiple
-                                        value={form.users || null}
-                                        onAddItem={(e, {value}) => onChange(e, {name: 'users', value: [...(form.users || []), value]})}
+                                        value={form.users || []}
+                                        onSearchChange={(e, { searchQuery }) => searchUsers(searchQuery)}
                                         onChange={(e, {value}) => {
-                                            onChange(e, {name: 'users', value: value})
+                                            onChange(e, {name: 'users', value: value});
+                                            let id = value.find(v => !(form.users || []).includes(v));
+                                            if (id) {
+                                                let u = users.rows.find(u => u.id === id);
+                                                setUserData([...userData, u])
+                                            }
                                         }}
                                     />
                                 </Form.Field>
