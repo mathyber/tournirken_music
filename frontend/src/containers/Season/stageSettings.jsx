@@ -57,7 +57,7 @@ const StageSettings = ({}) => {
 
 
     useEffect(() => {
-        stageData && stageData.seasonId && stageData.nextStage && loadData(stageData.seasonId);
+        isAdmin && stageData && stageData.seasonId && stageData.nextStage && loadData(stageData.seasonId);
     }, [stageData]);
 
     const loadData = (id) => {
@@ -124,7 +124,7 @@ const StageSettings = ({}) => {
                             type="audio/mpeg"/>
                 </audio>
             </Table.Cell>
-            <Table.Cell>
+            {isAdmin && <Table.Cell>
                 {app.users?.map((user, index) => (
                     <div key={user.id + "_" + index}>
                         <a style={{color: 'white'}}
@@ -134,14 +134,14 @@ const StageSettings = ({}) => {
                         </a>
                     </div>
                 ))}
-            </Table.Cell>
+            </Table.Cell>}
             <Table.Cell>
                 {app.originalSongName}
             </Table.Cell>
             <Table.Cell>
                 {app.songName}
             </Table.Cell>
-            <Table.Cell>
+            {isAdmin && <Table.Cell>
                 {isNew && !isDsq && <Button
                     disabled={stageData.count && stageData.count <= participants.length}
                     color='green' className='m-b-5' icon='plus'
@@ -150,7 +150,7 @@ const StageSettings = ({}) => {
                     !isNew && <Button color='red' className='m-b-5' icon='delete'
                                       onClick={() => delPtr(app.id)}/>
                 }
-            </Table.Cell>
+            </Table.Cell>}
         </Table.Row>
     }
 
@@ -172,16 +172,16 @@ const StageSettings = ({}) => {
                                         <Table.HeaderCell>
                                             Аудио
                                         </Table.HeaderCell>
-                                        <Table.HeaderCell>
+                                        {isAdmin && <Table.HeaderCell>
                                             Участник(и)
-                                        </Table.HeaderCell>
+                                        </Table.HeaderCell>}
                                         <Table.HeaderCell>
                                             Песня-оригинал
                                         </Table.HeaderCell>
                                         <Table.HeaderCell>
                                             Название заявки
                                         </Table.HeaderCell>
-                                        <Table.HeaderCell/>
+                                        {isAdmin && <Table.HeaderCell/>}
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body>
@@ -195,35 +195,38 @@ const StageSettings = ({}) => {
                             </Table>
                         </div>
 
-                        <h2>Добавить из списка:</h2>
-                        <div className='data-block__table'>
-                            <Table inverted color='grey'>
-                                <Table.Header className='table__header'>
-                                    <Table.Row>
-                                        <Table.HeaderCell/>
-                                        <Table.HeaderCell>
-                                            Аудио
-                                        </Table.HeaderCell>
-                                        <Table.HeaderCell>
-                                            Участник(и)
-                                        </Table.HeaderCell>
-                                        <Table.HeaderCell>
-                                            Песня-оригинал
-                                        </Table.HeaderCell>
-                                        <Table.HeaderCell>
-                                            Название заявки
-                                        </Table.HeaderCell>
-                                        <Table.HeaderCell/>
-                                    </Table.Row>
-                                </Table.Header>
-                                {
-                                    (apps.rows || []).filter(a => !participants.map(prt => prt.app).includes(a.id)).map((app, index) => {
-                                        console.log(app)
-                                        return row(app, true)
-                                    })
-                                }
-                            </Table>
-                        </div>
+                        {isAdmin && <>
+                            <h2>Добавить из списка:</h2>
+                            <div className='data-block__table'>
+                                <Table inverted color='grey'>
+                                    <Table.Header className='table__header'>
+                                        <Table.Row>
+                                            <Table.HeaderCell/>
+                                            <Table.HeaderCell>
+                                                Аудио
+                                            </Table.HeaderCell>
+                                            <Table.HeaderCell>
+                                                Участник(и)
+                                            </Table.HeaderCell>
+                                            <Table.HeaderCell>
+                                                Песня-оригинал
+                                            </Table.HeaderCell>
+                                            <Table.HeaderCell>
+                                                Название заявки
+                                            </Table.HeaderCell>
+                                            {isAdmin && <Table.HeaderCell/>}
+                                        </Table.Row>
+                                    </Table.Header>
+                                    {
+                                        (apps.rows || []).filter(a => !participants.map(prt => prt.app).includes(a.id)).map((app, index) => {
+                                            console.log(app)
+                                            return row(app, true)
+                                        })
+                                    }
+                                </Table>
+                            </div>
+                        </>}
+
                     </Grid.Column>
 
                     <Grid.Column width={6}>
@@ -259,6 +262,7 @@ const StageSettings = ({}) => {
                             <Form.Field className='m-b-5'>
                                 <label>Члены жюри</label>
                                 <Dropdown
+                                    disabled={!isAdmin}
                                     options={unique([...(users.rows || []),...(stageData.users || []), ...userData]).map(u => {
                                         return {key: u.id, text: u.name + " " + u.surname, value: u.id}
                                     })}
@@ -281,9 +285,9 @@ const StageSettings = ({}) => {
 
                             </Form.Field>
                             <Grid.Column width={12}>
-                                <Button className='form-btn m-b-5' color='violet'
-                                        onClick={save}
-                                        type='button'>Сохранить</Button>
+                                {isAdmin && <Button className='form-btn m-b-5' color='violet'
+                                         onClick={save}
+                                         type='button'>Сохранить</Button>}
                             </Grid.Column>
                             {/*<Grid.Column width={12}>*/}
                             {/*    <Button className='form-btn m-b-5' color='violet'*/}

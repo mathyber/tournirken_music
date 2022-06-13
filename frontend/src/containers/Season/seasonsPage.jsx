@@ -7,7 +7,7 @@ import PaginationBlock from "../../components/Pagination";
 import {COUNT_ITEMS} from "../../constants";
 import {useNavigate} from "react-router";
 import {isAdminSelector} from "../../ducks/user";
-import {NEW_SEASON_LINK, SEASON_LINK} from "../../router/links";
+import {NEW_SEASON_LINK, SEASON_LINK, SEASON_SETTINGS_LINK} from "../../router/links";
 
 const Seasons = () => {
 
@@ -38,7 +38,7 @@ const Seasons = () => {
                 <Card.Group className='data-block__items'>
                     {
                         seasonData.rows && seasonData.rows.map(s => (
-                            <SeasonCard onClick={() => navigate(SEASON_LINK.replace(':id', s.id))} key={s.id} row={s}/>
+                            <SeasonCard onClick={() => navigate(isAdmin? SEASON_LINK.replace(':id', s.id) : SEASON_SETTINGS_LINK.replace(':id', s.id))} key={s.id} row={s}/>
                         ))
                     }
                 </Card.Group>
