@@ -12,7 +12,7 @@ import {
     stageSelector
 } from "../../ducks/season";
 import {getUsers, isAdminSelector, usersSelector} from "../../ducks/user";
-import {Button, Dropdown, Form, Grid, Label, Segment, Table} from "semantic-ui-react";
+import {Button, Dimmer, Dropdown, Form, Grid, Label, Loader, Segment, Table} from "semantic-ui-react";
 import {appsSelector, getApps, setStagesApps} from "../../ducks/application";
 import {COUNT_ITEMS} from "../../constants";
 import {toast} from "react-toastify";
@@ -52,7 +52,6 @@ const StageSettings = ({}) => {
     }
 
     useEffect(() => {
-        //params?.id && dispatch(getSeason(params.id));
         params?.id && dispatch(getStage(params.id));
     }, [params]);
 
@@ -80,7 +79,7 @@ const StageSettings = ({}) => {
 
     useEffect(() => {
         setApps({
-            rows: [...(stageData?.applications ? stageData.applications.map(app => app) : []), ...(appsData.rows || [])]
+            rows: unique([...(stageData?.applications ? stageData.applications.map(app => app) : []), ...(appsData.rows || [])])
         });
     }, [appsData, stageData]);
 
@@ -112,7 +111,7 @@ const StageSettings = ({}) => {
     };
 
     const row = (app, isNew, indx) => {
-        return <Table.Row key={app.id}>
+        return <Table.Row key={'key_'+app.id}>
             <Table.Cell>
                 <b>{!isNew && indx}</b>
             </Table.Cell>
@@ -154,6 +153,9 @@ const StageSettings = ({}) => {
 
     return (
         <div className='container'>
+            {loading && <Dimmer active={loading}>
+                <Loader inverted size='large'>Loading</Loader>
+            </Dimmer>}
             <h1>Стадия: {stageData.name}, сезон: {stageData.season?.name}</h1>
             <Grid>
                 <Grid.Row>
@@ -213,6 +215,7 @@ const StageSettings = ({}) => {
                                 </Table.Header>
                                 {
                                     (apps.rows || []).filter(a => !participants.map(prt => prt.app).includes(a.id)).map((app, index) => {
+                                        console.log(app)
                                         return row(app, true)
                                     })
                                 }
