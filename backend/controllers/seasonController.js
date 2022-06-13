@@ -231,8 +231,8 @@ class SeasonController {
                 where: {id},
                 include: [
                     {model: Season, as: 'season'},
-                    {model: Application, include: [{model: User, as: 'users'}], as: 'applications'},
-                    {model: User, as: 'users'},
+                    {model: Application, include: [{model: User, as: 'users', attributes: ['id', 'email', 'vk', 'name', 'surname', 'alias']}], as: 'applications'},
+                    {model: User, as: 'users', attributes: ['id', 'email', 'vk', 'name', 'surname', 'alias']},
                 ]
             });
 

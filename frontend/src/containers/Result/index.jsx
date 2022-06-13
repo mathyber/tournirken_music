@@ -52,7 +52,7 @@ const Result = () => {
                     {voteOpen && <Label color='red'>
                         Идет голосование
                     </Label>}
-                    {!voteOpen && <Button size="mini" color='green' onClick={saveVoting}>
+                    {!voteOpen && stageData.startVote && <Button size="mini" color='green' onClick={saveVoting}>
                         Подтвердить результаты
                     </Button>}
                 </div>

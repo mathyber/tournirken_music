@@ -1,5 +1,5 @@
 const contestData = require('../settings.json');
-const {Point, Jury, Stage} = require("../models/models");
+const {Point, Jury, Stage, Application, ApplicationStage, ApplicationState} = require("../models/models");
 const ApiError = require("../error/apiError");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
@@ -43,7 +43,24 @@ class VoteController {
             const {id} = req.params;
             const {points} = req.body;
 
-            if (Object.keys(points).filter(p => points[p]).length !== contestData.pointsSystem.length) {
+            const stage = await Stage.findOne({
+                where: {id},
+                include: [{model: Application, as: 'applications'}]
+            });
+
+            if (!stage) return next(ApiError.internal('Сезона нет'));
+
+            const dsqStatus = await ApplicationState.findOne({
+                where: {name: 'DSQ'}
+            });
+
+            console.log(stage.applications.filter(a => a.applicationStateId !== dsqStatus.id).length)
+
+            const appsCount = stage.applications.filter(a => a.applicationStateId !== dsqStatus.id).length;
+
+            const count = appsCount < contestData.pointsSystem.length ? appsCount : contestData.pointsSystem.length;
+
+            if (Object.keys(points).filter(p => points[p]).length !== count) {
                 return next(ApiError.badRequest('Поставьте все баллы!'))
             }
 
@@ -54,7 +71,7 @@ class VoteController {
                 }
             });
 
-            if (isVoted.length === contestData.pointsSystem.length) {
+            if (isVoted.length >= count) {
                 return next(ApiError.badRequest('Вы уже проголосовали в этой стадии!'))
             }
 

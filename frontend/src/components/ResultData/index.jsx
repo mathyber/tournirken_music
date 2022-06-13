@@ -43,8 +43,8 @@ const ResultData = ({id, apps, juries: allJuries = [], points}) => {
     }, [votes]);
 
     const name = (pt) => {
-        const a = apps.find(app => app.id.toString() === pt.app.toString());
-        return `${a?.application_stage?.number} - ${a.songName}`
+        const a = apps.find(app => app?.id?.toString() === pt?.app?.toString());
+        return `${a?.application_stage?.number} - ${a?.songName}`
     }
 
     const table = (res) => {
@@ -75,10 +75,10 @@ const ResultData = ({id, apps, juries: allJuries = [], points}) => {
                                             <Table.Row
                                                 className={apps.find(a => a.applicationStateId === 6 && (a.id.toString() === pt.app.toString()))
                                                     ? 'table-row_dsq' : (votes && votes.stage && ((votes.stage.winCount >= index + 1) ?
-                                                    'table-row_green' : ((votes.stage.secondChanceCount + votes.stage.winCount >= index + 1)
-                                                        && 'table-row_yellow')))}>
+                                                        'table-row_green' : ((votes.stage.secondChanceCount + votes.stage.winCount >= index + 1)
+                                                            && 'table-row_yellow')))}>
                                                 <Table.Cell>
-                                                    {apps.find(a => a.applicationStateId === 6 && (a.id.toString() === pt.app.toString()))? 'DSQ' : index + 1}
+                                                    {apps.find(a => a.applicationStateId === 6 && (a.id.toString() === pt.app.toString())) ? 'DSQ' : index + 1}
                                                 </Table.Cell>
                                                 <Table.Cell>
                                                     {name(pt)}
@@ -86,10 +86,10 @@ const ResultData = ({id, apps, juries: allJuries = [], points}) => {
                                                 <Table.Cell style={{fontSize: '20px'}}>
                                                     <b>{pt.points || 0}</b>
                                                     {
-                                                        res.points.find(pnt => pnt.app.toString() === pt.app.toString()) &&
+                                                        res.points.find(pnt => pnt.app?.toString() === pt.app?.toString()) &&
                                                         <Label color='orange' style={{marginLeft: '5px'}}>
                                                             <b>
-                                                                + {res.points.find(pnt => pnt.app.toString() === pt.app.toString()).points}
+                                                                + {res.points.find(pnt => pnt.app?.toString() === pt.app?.toString()).points}
                                                             </b>
                                                         </Label>
                                                     }
@@ -128,7 +128,7 @@ const ResultData = ({id, apps, juries: allJuries = [], points}) => {
                                             return 0;
                                         }
                                     ).map(pt => (
-                                            <Table.Row>
+                                            <Table.Row key={pt.app + "_" + pt.points}>
                                                 <Table.Cell>
                                                     {name(pt)}
                                                 </Table.Cell>
