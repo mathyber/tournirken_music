@@ -295,8 +295,9 @@ class UserController {
                         {name: {[Op.like]: `%${search}%`}},
                         {surname: {[Op.like]: `%${search}%`}},
                         {alias: {[Op.like]: `%${search}%`}},
-                    ]
+                    ],
                 },
+                attributes: ['id', 'email', 'vk', 'name', 'surname', 'alias'],
                 limit,
                 offset
             })

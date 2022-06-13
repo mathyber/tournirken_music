@@ -11,13 +11,14 @@ import {
     setJury,
     stageSelector
 } from "../../ducks/season";
-import {isAdminSelector} from "../../ducks/user";
+import {getUsers, isAdminSelector, usersSelector} from "../../ducks/user";
 import {Button, Dropdown, Form, Grid, Label, Segment, Table} from "semantic-ui-react";
 import {appsSelector, getApps, setStagesApps} from "../../ducks/application";
 import {COUNT_ITEMS} from "../../constants";
 import {toast} from "react-toastify";
 import pkg from "../../../package.json";
 import {RESULT_LINK, STAGE_LINK, USER_LINK} from "../../router/links";
+import {unique} from "../../utils/array";
 
 const StageSettings = ({}) => {
 
@@ -29,6 +30,8 @@ const StageSettings = ({}) => {
     const navigate = useNavigate();
     const loading = useSelector(progressSelector);
     const seasonData = useSelector(seasonSelector);
+    const [userData, setUserData] = useState([]);
+    const users = useSelector(usersSelector);
 
     const stageData = useSelector(stageSelector);
 
@@ -43,6 +46,10 @@ const StageSettings = ({}) => {
             [name]: value
         }))
     };
+
+    const searchUsers = (value) => {
+        dispatch(getUsers({search: value}));
+    }
 
     useEffect(() => {
         //params?.id && dispatch(getSeason(params.id));
@@ -246,21 +253,26 @@ const StageSettings = ({}) => {
                             <Form.Field className='m-b-5'>
                                 <label>Члены жюри</label>
                                 <Dropdown
-                                    options={(form.users || []).map(u=>({
-                                        value: u, name: u, text: u
-                                    }))}
-                                    placeholder='Введите id пользователей'
+                                    options={unique([...(users.rows || []),...(stageData.users || []), ...userData]).map(u => {
+                                        return {key: u.id, text: u.name + " " + u.surname, value: u.id}
+                                    })}
+                                    placeholder='Поиск пользователя'
                                     search
                                     selection
                                     fluid
-                                    allowAdditions
                                     multiple
-                                    value={form.users || null}
-                                    onAddItem={(e, {value}) => onChange(e, {name: 'users', value: [...(form.users || []), value]})}
+                                    value={form.users || []}
+                                    onSearchChange={(e, { searchQuery }) => searchUsers(searchQuery)}
                                     onChange={(e, {value}) => {
-                                        onChange(e, {name: 'users', value: value})
+                                        onChange(e, {name: 'users', value: value});
+                                        let id = value.find(v => !(form.users || []).includes(v));
+                                        if (id) {
+                                            let u = users.rows.find(u => u.id === id);
+                                            setUserData([...userData, u])
+                                        }
                                     }}
                                 />
+
                             </Form.Field>
                             <Grid.Column width={12}>
                                 <Button className='form-btn m-b-5' color='violet'
