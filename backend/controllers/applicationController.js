@@ -11,6 +11,9 @@ class ApplicationController {
         try {
             const {season, originalSongName, songName, users} = req.body;
             const {audioFile} = req.files;
+
+            if (!audioFile.mimetype.includes('audio')) return next(ApiError.internal('Формат файла не подходит. Выберите аудиофайл .mp3, .m4a, .flac, .wav, .wma'));
+
             let fileName = uuid.v4() + '_' + audioFile.name;
             audioFile.mv(path.resolve(__dirname, '..', 'static', fileName));
 

@@ -73,6 +73,7 @@ const NewAppPage = (props) => {
                                     label='Аудиофайл'
                                     name='audioFile'
                                     onChange={onChangeInputFile}
+                                    accept=".mp3, .m4a, .flac, .wav, .wma"
                                 />
 
                                 <Form.Field>
