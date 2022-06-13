@@ -111,7 +111,10 @@ const StageSettings = ({}) => {
     };
 
     const row = (app, isNew, indx) => {
-        return <Table.Row key={'key_'+app.id}>
+
+        const isDsq = app.applicationStateId === 6;
+
+        return <Table.Row key={'key_'+app.id} className={isDsq && 'table-row_dsq'}>
             <Table.Cell>
                 <b>{!isNew && indx}</b>
             </Table.Cell>
@@ -139,7 +142,7 @@ const StageSettings = ({}) => {
                 {app.songName}
             </Table.Cell>
             <Table.Cell>
-                {isNew && <Button
+                {isNew && !isDsq && <Button
                     disabled={stageData.count && stageData.count <= participants.length}
                     color='green' className='m-b-5' icon='plus'
                     onClick={() => addPtr(app.id)}/>}
