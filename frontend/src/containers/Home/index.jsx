@@ -18,7 +18,7 @@ const Home = () => {
             <p>
                 {data.description}
             </p>
-            {data.seasons?.map(s => (<div>
+            {data.seasons?.map(s => (<div key={"key_"+s.id}>
                 <Button
                     className='m-b-5'
                     onClick={() => navigate(NEW_APP_LINK.replace(':id', s.id))}
