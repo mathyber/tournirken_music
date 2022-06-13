@@ -34,7 +34,6 @@ const StageForm = ({nameStage, disabled, form = {}, onChange, isFinal, isSemifin
                 name='count'
                 type='number'
                 min={0}
-                //max={100}
                 value={form.count || 0}
                 onChange={onChange}
                 disabled={disabled}
@@ -44,7 +43,7 @@ const StageForm = ({nameStage, disabled, form = {}, onChange, isFinal, isSemifin
                 name='winCount'
                 type='number'
                 min={0}
-                //max={100}
+                max={form.count ? (form.count - (form.secondChanceCount || 0)) : null}
                 value={form.winCount || 0}
                 onChange={onChange}
                 disabled={disabled}
@@ -54,7 +53,7 @@ const StageForm = ({nameStage, disabled, form = {}, onChange, isFinal, isSemifin
                 name='secondChanceCount'
                 type='number'
                 min={0}
-                //max={100}
+                max={form.count ? (form.count - (form.winCount || 0)) : null}
                 value={form.secondChanceCount || 0}
                 onChange={onChange}
                 disabled={disabled}
@@ -62,6 +61,7 @@ const StageForm = ({nameStage, disabled, form = {}, onChange, isFinal, isSemifin
             <Form.Input
                 label='Старт голосования'
                 name='startVote'
+                max={form.endVote}
                 type='datetime-local'
                 value={toFormat(form.startVote) || null}
                 onChange={onChange}
@@ -70,6 +70,7 @@ const StageForm = ({nameStage, disabled, form = {}, onChange, isFinal, isSemifin
             <Form.Input
                 label='Завершение голосования'
                 name='endVote'
+                min={form.startVote}
                 type='datetime-local'
                 value={toFormat(form.endVote) || null}
                 onChange={onChange}

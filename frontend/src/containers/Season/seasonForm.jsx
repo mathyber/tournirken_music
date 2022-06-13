@@ -170,11 +170,12 @@ const SeasonForm = () => {
                                     disabled={!isAdmin}
                                     label='Описание'
                                     name='description'
-                                    value={form.description}
+                                    value={form.description || ''}
                                     onChange={onChange}
                                 />
                                 <Form.Input
                                     disabled={!isAdmin}
+                                    max={form.dateEnd}
                                     label='Дата начала приема заявок'
                                     name='dateStart'
                                     type='datetime-local'
@@ -183,6 +184,7 @@ const SeasonForm = () => {
                                 />
                                 <Form.Input
                                     disabled={!isAdmin}
+                                    min={form.dateStart}
                                     label='Дата окончания приема заявок'
                                     name='dateEnd'
                                     type='datetime-local'
